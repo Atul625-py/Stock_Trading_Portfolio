@@ -84,7 +84,7 @@ CREATE TABLE UserSettings (
 );
 
 
-DELIMITER //
+DELIMITER $$
 
 CREATE TRIGGER update_profit_loss
 AFTER UPDATE ON Stocks
@@ -129,6 +129,6 @@ BEGIN
 
     -- Close the cursor
     CLOSE cur;
-END; //
+END; $$
 
 DELIMITER ;
