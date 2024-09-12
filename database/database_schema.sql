@@ -1,6 +1,6 @@
 SET SQL_SAFE_UPDATES = 0;
 
-DROP DATABASE IF EXISTS database_schema;
+-- DROP DATABASE IF EXISTS database_schema;
 CREATE DATABASE IF NOT EXISTS database_schema;
 USE database_schema;
 
@@ -84,7 +84,7 @@ CREATE TABLE UserSettings (
 );
 
 
-DELIMITER //
+DELIMITER $$
 
 CREATE TRIGGER update_profit_loss
 AFTER UPDATE ON Stocks
@@ -129,6 +129,6 @@ BEGIN
 
     -- Close the cursor
     CLOSE cur;
-END; //
+END; $$
 
 DELIMITER ;
