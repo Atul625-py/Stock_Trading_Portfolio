@@ -1,0 +1,58 @@
+.gitignore
+
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment Files
+.env
+*.env
+
+# Database Files
+*.sqlite3
+db.sqlite3
+
+# SQL Dumps
+*.sql
+
+# Django Specific
+/static/
+*.log
+*.pot
+*.pyc
+*/migrations/
+
+# Node Modules for Frontend (if using JavaScript/React)
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# OS Specific Files
+.DS_Store
+Thumbs.db
+
+# IDE Specific Files
+.vscode/
+.idea/
+*.swp
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Django Secret Key
+**/settings.py
+**/settings_local.py
+
+# Compiled Frontend Files
+/public/
+build/
+
+# Cache Files
+*.cache
+
+# Git Files
+*.orig
