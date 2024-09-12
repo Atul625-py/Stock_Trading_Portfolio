@@ -10,8 +10,8 @@ CREATE TABLE Users (
     email VARCHAR(255) UNIQUE NOT NULL,
     username VARCHAR(50) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) DEFAULT " ",
     budget DECIMAL(15, 2) NOT NULL DEFAULT 500 CHECK (budget >= 0),  -- Ensures non-negative budget
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
