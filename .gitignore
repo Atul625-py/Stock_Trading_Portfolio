@@ -1,3 +1,4 @@
+.gitignore
 
 # Python Bytecode
 __pycache__/
