@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" href="styles.css">
 
     <!-- Link to the navbar's CSS -->
@@ -12,25 +12,36 @@
 <body>
 
     <!-- Navigation Bar -->
-    <div id="navbar">
-        <!-- Include your dynamically loaded navbar here -->
-    </div>
+    <div id="navbar"></div>
 
     <div class="container">
-        <div class="login-form">
-            <h2>Login</h2>
+        <div class="register-form">
+            <h2>Register</h2>
             <form>
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="first-name">
+                
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="last-name">
+                
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username">
                 
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password">
                 
-                <button type="submit">Login</button>
+                <label for="phone">Phone no.:</label>
+                <input type="text" id="phone" name="phone">
+                
+                <label for="email">Email-ID:</label>
+                <input type="email" id="email" name="email">
+                
+                <button type="submit">Register</button>
             </form>
         </div>
     </div>
-
+    <!-- Load Navbar JS -->
     <script src="./../Navigation/navbar.js"></script>
+
 </body>
 </html>

@@ -1,4 +1,6 @@
 // Dynamically load navbar into the page
+document.addEventListener("DOMContentLoaded", function() {
+
 document.getElementById('navbar').innerHTML = `
     <div class="navbar">
         <link rel="stylesheet" href="./navbar.css">
@@ -14,4 +16,4 @@ document.getElementById('navbar').innerHTML = `
         </ul>
         <a href="/frontend/login/" class="login-btn">Login/Register</a>
     </div>
-`;
+`});
