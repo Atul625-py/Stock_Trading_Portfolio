@@ -12,7 +12,7 @@ CREATE TABLE Users (
     password_hash VARCHAR(255) NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) DEFAULT " ",
-    budget DECIMAL(15, 2) NOT NULL DEFAULT 500 CHECK (budget >= 0),  -- Ensures non-negative budget
+    budget DECIMAL(15, 2) DEFAULT 500 CHECK (budget >= 0),  -- Ensures non-negative budget
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Pro Trader X</title>
+    <!-- Link to the main page's CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Link to the navbar's CSS -->
+    <link rel="stylesheet" href="./Navigation/navbar.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div id="navbar"></div>
+    
+    <div class="container">
+        <h1 class="home-title">Home</h1>
+        <h2 class="your-stocks">Your Stocks</h2>
+        <table class="stocks-table">
+            <thead>
+                <tr>
+                    <th>Sr. no.</th>
+                    <th>Name of Stocks</th>
+                    <th>No. of stocks Owned</th>
+                    <th>Average price per stocks purchased</th>
+                    <th>Current price per stocks</th>
+                    <th>Profit/Loss</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Repeat rows as needed -->
+                <tr>
+                    <td>1.</td>
+                    <td>Reliance</td>
+                    <td>4</td>
+                    <td>Rs. 50</td>
+                    <td>Rs. 60</td>
+                    <td>20%</td>
+                    <td>
+                        <button class="buy-btn">Buy more</button>
+                        <button class="sell-btn">Sell</button>
+                    </td>
+                </tr>
+                <!-- Add more rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Load Navbar JS -->
+    <script src="./Navigation/navbar.js"></script>
+</body>
+</html>
