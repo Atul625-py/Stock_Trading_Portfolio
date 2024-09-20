@@ -48,7 +48,6 @@ ENV/
 **/settings_local.py
 
 # Compiled Frontend Files
-/public/
 build/
 
 # Cache Files
