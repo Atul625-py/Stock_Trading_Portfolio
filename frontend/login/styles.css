@@ -21,6 +21,7 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
+    margin-top: 80px;
 }
 
 .login-form {
@@ -73,12 +74,34 @@ button {
     cursor: pointer;
     font-size: 16px;
     margin-top: 20px;
+    text-decoration: none;
 }
 
 button:hover {
     background-color: #006666;
+    text-decoration: none;
+}
+.reg {
+    padding: 10px;
+    background-color: teal;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 0px;
+    text-decoration: none;
 }
 
+.reg:hover {
+    background-color: #006666;
+    text-decoration: none;
+}
+.h3or {
+    text-decoration: none;
+    font-size: 15px;
+    font: Arial;
+}
 /* Navigation bar styling (optional placeholder) */
 .navbar {
     width: 100%;
