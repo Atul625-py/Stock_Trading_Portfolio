@@ -24,6 +24,7 @@ body {
 }
 
 
+
 /* Profile Container */
 .profile-container {
     display: flex;
@@ -49,7 +50,9 @@ body {
 }
 
 .profile-pic-container {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Ensures content is centered */
     margin-bottom: 20px;
 }
 
@@ -85,7 +88,12 @@ body {
 /* Right section (Profile Details) */
 .profile-right {
     width: 65%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
 }
+
 
 h2 {
     font-size: 28px;
@@ -94,14 +102,22 @@ h2 {
     text-align: center;
 }
 
+/* Profile Details Section */
 .profile-details .field {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     padding: 10px;
     border-radius: 5px;
-    background-color: rgba(0, 128, 128, 0.1); /* Light background for each field */
+    background-color: rgba(0, 128, 128, 0.1);
+    width: 100%;
+}
+
+.field span {
+    flex: 1; /* Ensures the text occupies available space */
+    margin-right: 40px; /* Adds space between text and Change button */
+    white-space: nowrap; /* Prevents text from wrapping */
 }
 
 .field span.value {
@@ -115,8 +131,10 @@ h2 {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 20px; /* Ensure the button is not too close to the text */
 }
 
+/* Save Changes Button */
 .save-changes-btn {
     margin-top: 30px;
     padding: 10px 20px;
@@ -125,11 +143,10 @@ h2 {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    display: block;
     width: 200px;
     text-align: center;
+    margin: 30px auto 0; /* Center the button */
 }
-
 .save-changes-btn:hover {
     background-color: #5e005e;
 }

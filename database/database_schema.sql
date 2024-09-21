@@ -153,7 +153,7 @@ BEGIN
     -- Ensure that the user can afford the transaction
     IF user_budget < total_cost THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Transaction exceeds user\'s budget';
+        SET MESSAGE_TEXT = "Transaction exceeds user's budget";
     END IF;
 END $$
 
