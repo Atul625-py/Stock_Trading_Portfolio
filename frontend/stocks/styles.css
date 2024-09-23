@@ -1,7 +1,10 @@
 /* General styling */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-image: url('../../Public/bg.jpg'); /* Specify the image path here */
+    background-size: cover;  /* Ensures the image covers the entire background */
+    background-position: center;  /* Centers the image */
+    background-repeat: repeat;
     margin: 0;
     padding: 0;
 }
@@ -18,7 +21,7 @@ body {
 /* Container for the main content */
 .container {
     max-width: 1200px;
-    margin: 20px auto;
+    margin: 80px auto;
     padding: 20px;
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
