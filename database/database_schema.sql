@@ -218,7 +218,7 @@ BEGIN
     WHERE portfolio_id = NEW.portfolio_id;
 END $$
 
-DELIMITER $$
+DELIMITER ;
 
 CREATE VIEW PortfolioView AS
 SELECT 
@@ -323,3 +323,50 @@ WHERE
     W.user_id = 100005
 ORDER BY 
     W.added_at;
+
+
+
+INSERT INTO Stocks (symbol, name, market, current_price, quantity) VALUES
+('AAPL', 'Apple Inc.', 'NASDAQ', 150.25, 30),
+('GOOGL', 'Alphabet Inc.', 'NASDAQ', 2800.50, 30),
+('TSLA', 'Tesla Inc.', 'NASDAQ', 725.00, 30),
+('MSFT', 'Microsoft Corp.', 'NASDAQ', 300.00, 30),
+('AMZN', 'Amazon.com Inc.', 'NASDAQ', 3400.75, 30);
+
+
+INSERT INTO Dividends (stock_id, dividend_amount, payout_date) VALUES
+(1, 1.50, '2024-09-01'),
+(2, 2.75, '2024-08-15'),
+(3, 0.50, '2024-07-20'),
+(4, 1.20, '2024-06-10'),
+(5, 3.10, '2024-05-05');
+
+INSERT INTO Users (user_id, email, username, password_hash, first_name, last_name, role, budget) VALUES
+(100005, 'admin1@example.com', 'Bob128', 'hashpassword1',  'Bob', ' Matthews', 'user' , 10000);
+
+
+INSERT INTO Portfolios (user_id, portfolio_id, portfolio_name) VALUES
+(100005,5, "My portfolio");
+
+INSERT INTO Transactions (portfolio_id, stock_id, transaction_type, quantity, price_per_share) VALUES
+(5, 1, 'buy', 5, 148.00), 
+(5, 2, 'buy', 2, 985.00),
+(5, 2, 'sell', 2, 725.50),
+(5, 4, 'buy', 2, 310.00),
+(5, 4, 'sell', 1, 350.00),
+(5, 3 , 'buy', 4, 751.00);
+
+
+
+
+INSERT INTO Watchlist (user_id, stock_id) VALUES
+(100005, 1);
+
+select * from users;
+
+select * from transactionview;
+select * from HomeView;
+select * from SoldView;
+select * from WatchlistView;
+select * from StocksView;
+select * from PortfolioView;

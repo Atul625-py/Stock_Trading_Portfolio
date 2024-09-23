@@ -86,3 +86,25 @@ select * from SoldView;
 select * from WatchlistView;
 select * from StocksView;
 select * from PortfolioView;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
