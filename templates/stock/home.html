@@ -1,3 +1,7 @@
+{% extends './navbar.html' %}
+{% load static %}
+
+{% block body %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,14 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Pro Trader X</title>
     <!-- Link to the main page's CSS -->
-    <link rel="stylesheet" href="styles.css">
-    <!-- Link to the navbar's CSS -->
-    <link rel="stylesheet" href="./Navigation/navbar.css">
-</head>
-<body>
-    <!-- Navigation Bar -->
-    <div id="navbar"></div>
     
+    <link rel="stylesheet" href="{% static 'stock/css/home.css' %}" type="text/css" media="screen" >
+    <!-- Link to the navbar's CSS -->
+    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
+</head>
+<body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
+    
+
     <div class="container">
         <h1 class="home-title">Home</h1>
         <h2 class="your-stocks">Your Stocks</h2>
@@ -47,7 +51,11 @@
         </table>
     </div>
 
-    <!-- Load Navbar JS -->
-    <script src="./Navigation/navbar.js"></script>
+
+
+
+
 </body>
 </html>
+
+{% endblock body %}

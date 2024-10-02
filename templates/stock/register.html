@@ -1,18 +1,21 @@
+{% extends './navbar.html' %}
+{% load static %}
+
+{% block body %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" href="styles.css">
-
+    <link rel="stylesheet" href="{% static 'stock/css/register.css' %}" type="text/css" media="screen" >
     <!-- Link to the navbar's CSS -->
-    <link rel="stylesheet" href="./../Navigation/navbar.css">
+    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
 </head>
-<body>
+<body style="background-image: url('{% static 'stock/images/loginbg.jpg' %}');">
 
-    <!-- Navigation Bar -->
-    <div id="navbar"></div>
+
 
     <div class="container">
         <div class="register-form">
@@ -41,7 +44,9 @@
         </div>
     </div>
     <!-- Load Navbar JS -->
-    <script src="./../Navigation/navbar.js"></script>
 
 </body>
 </html>
+
+
+{% endblock body %}

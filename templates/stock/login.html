@@ -1,20 +1,22 @@
+{% extends './navbar.html' %}
+{% load static %}
+
+{% block body %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
-
+    <link rel="stylesheet" href="{% static 'stock/css/login.css' %}" type="text/css" media="screen" >
     <!-- Link to the navbar's CSS -->
-    <link rel="stylesheet" href="./../Navigation/navbar.css">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
 
-    <!-- Navigation Bar -->
-    <div id="navbar">
-        <!-- Include your dynamically loaded navbar here -->
-    </div>
+</head>
+<body style="background-image: url('{% static 'stock/images/loginbg.jpg' %}');">
+
+
 
     <div class="container">
         <div class="login-form">
@@ -37,6 +39,7 @@
         </div>
     </div>
 
-    <script src="./../Navigation/navbar.js"></script>
 </body>
 </html>
+
+{% endblock body %}

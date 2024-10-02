@@ -1,18 +1,19 @@
+{% extends './navbar.html' %}
+{% load static %}
+
+{% block body %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watchlist - Pro Trader X</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="../Navigation/navbar.css">
-
+    <link rel="stylesheet" href="{% static 'stock/css/watchlist.css' %}" type="text/css" media="screen" >
+    <!-- Link to the navbar's CSS -->
+    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
 </head>
-<body>
-
-    <!-- Navbar  -->
-    <div id="navbar"></div>
-
+<body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
 
     <!-- Main Content -->
     <section class="container">
@@ -58,6 +59,6 @@
             </tbody>
         </table>
     </section>
-    <script src="../Navigation/navbar.js"></script>
 </body>
 </html>
+{% endblock body %}

@@ -9,18 +9,13 @@ __pycache__/
 .env
 *.env
 
-# Database Files
-*.sqlite3
-db.sqlite3
 
 
 
 # Django Specific
-/static/
 *.log
 *.pot
 *.pyc
-*/migrations/
 
 # Node Modules for Frontend (if using JavaScript/React)
 node_modules/
@@ -42,9 +37,7 @@ venv/
 env/
 ENV/
 
-# Django Secret Key
-**/settings.py
-**/settings_local.py
+
 
 # Compiled Frontend Files
 build/

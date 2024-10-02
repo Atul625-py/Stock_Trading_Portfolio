@@ -1,17 +1,22 @@
+{% extends './navbar.html' %}
+{% load static %}
+
+{% block body %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Pro Trader X</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="../Navigation/navbar.css">
+    <link rel="stylesheet" href="{% static 'stock/css/portfolio.css' %}" type="text/css" media="screen" >
+    <!-- Link to the navbar's CSS -->
+    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
 
 </head>
-<body>
+<body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
 
-    <!-- Navbar  -->
-    <div id="navbar"></div>
+    
 
     <!-- Main Content -->
     <section class="container">
@@ -20,7 +25,7 @@
         <!-- Chart Section -->
         <div class="portfolio-section">
             <div class="chart-container">
-                <img src="../../Public/graph.png" alt="Stock Chart" class="chart-image">
+                <img src="{% static 'stock/images/graph.png' %}"  alt="Stock Chart" class="chart-image">
             </div>
 
             <!-- Summary Section -->
@@ -42,7 +47,8 @@
             </div>
         </div>
     </section>
-    <script src="../Navigation/navbar.js"></script>
 
 </body>
 </html>
+
+{% endblock body %}
