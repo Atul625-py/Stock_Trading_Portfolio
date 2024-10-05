@@ -1,6 +1,7 @@
 # Stock_Trading_Portfolio
 
 Hi Everyone. This is me Atul Kumar Pandey
+and my teammate Chukka Chamantej
 designing a website to buy and sell stocks 
 as our ITW project of IIT - BHU.
 
