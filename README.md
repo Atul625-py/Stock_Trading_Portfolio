@@ -14,7 +14,8 @@ To use this do the following.
 1. Make a clone of my repo on your pc.
 Use => git clone https://github.com/Atul625-py/Stock_Trading_Portfolio.git
 
-2. Run this server with live server using vs-code.
-3. GO to /frontend folder too see the frontend.
+2. Run this server with following command.
+
+python manage.py runserver
 
 I will update this as i develop the backend.
