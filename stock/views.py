@@ -1,6 +1,17 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import Stock, Portfolio, Transaction
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .utils import fetch_and_load_stock_data  # Import your function
+
+@csrf_exempt  # Disable CSRF for simplicity, you may want to handle CSRF tokens properly in production
+def reload_stocks(request):
+    if request.method == 'POST':
+        fetch_and_load_stock_data()
+        return JsonResponse({'status': 'Stocks reloaded successfully'})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
 
 # Create your views here.
 
@@ -41,7 +52,8 @@ def watchlist(request):
 
 
 def stocks(request):
-    return render(request, 'stock/stocks.html')
+    stocks = Stock.objects.all()  # Fetch all stocks from the database
+    return render(request, 'stock/stocks.html', {'stocks': stocks})
 
 def portfolio(request):
     return render(request, 'stock/portfolio.html')

@@ -9,58 +9,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Stocks - Pro Trader X</title>
-    <link rel="stylesheet" href="{% static 'stock/css/stocks.css' %}" type="text/css" media="screen" >
-    <!-- Link to the navbar's CSS -->
-    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
+    <link rel="stylesheet" href="{% static 'stock/css/stocks.css' %}" type="text/css" media="screen">
+    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen">
 </head>
 <body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
     
-
     <!-- Main Content -->
     <section class="container">
         <h2 class="heading">All Stocks</h2>
+        <button id="reload-stocks-btn">Reload Stocks</button>
+
+        <p id="status-message"></p>
+            <!-- Include jQuery -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>       
+
+        <script>
+            $(document).ready(function() {
+                $('#reload-stocks-btn').click(function() {
+
+                    $.ajax({
+                        url: "{% url 'reload_stocks' %}",
+                        type: 'POST',
+                        data: {},
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        success: function(response) {
+                            $('#status-message').text(response.status);
+                        },
+                        error: function(error) {
+                            $('#status-message').text('Failed to reload stocks.');
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <!-- Dynamic Table -->
         <table class="stocks-table">
             <thead>
                 <tr>
                     <th>Sr. No.</th>
                     <th>Name of Stocks</th>
                     <th>No. of stocks available</th>
-                    <th>No. of stocks selected</th>
                     <th>Current price per stock</th>
                     <th>Total Price</th>
                     <th>Options</th>
                 </tr>
             </thead>
             <tbody>
+                {% for stock in stocks %}
                 <tr>
-                    <td>1</td>
-                    <td>Apple (AAPL)</td>
-                    <td>1000</td>
-                    <td>50</td>
-                    <td>14,500</td>
-                    <td>725,000</td>
+                    <td>{{ forloop.counter }}</td> <!-- Auto-incrementing serial number -->
+                    <td>{{ stock.name }} ({{ stock.symbol }})</td> <!-- Stock name and symbol -->
+                    <td>{{ stock.quantity }}</td> <!-- Number of stocks available -->
+                    <td>{{ stock.current_price }}</td> <!-- Current price per stock -->
+                    <td>{{ stock.quantity|floatformat:2|floatformat:"g" }}</td> <!-- Total Price = quantity * current_price -->
                     <td>
                         <button class="purchase-btn">Purchase</button>
                         <button class="watchlist-btn">Add to Watchlist</button>
                     </td>
                 </tr>
+                {% empty %}
                 <tr>
-                    <td>2</td>
-                    <td>Tesla (TSLA)</td>
-                    <td>500</td>
-                    <td>20</td>
-                    <td>59,500</td>
-                    <td>1,119,000</td>
-                    <td>
-                        <button class="purchase-btn">Purchase</button>
-                        <button class="watchlist-btn">Add to Watchlist</button>
-                    </td>
+                    <td colspan="6">No stocks available.</td>
                 </tr>
-                <!-- More rows can be added here -->
+                {% endfor %}
             </tbody>
         </table>
     </section>
-
 </body>
 </html>
 

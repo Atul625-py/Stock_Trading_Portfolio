@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+import requests
+
 
 class User(models.Model):
     ROLES = [
@@ -16,6 +18,7 @@ class User(models.Model):
     role = models.CharField(max_length=5, choices=ROLES, default='user')
     budget = models.DecimalField(max_digits=15, decimal_places=2, default=5000)
     created_at = models.DateTimeField(default=timezone.now)
+    image = models.ImageField(default='./static/stock/images/profile.jpg')
 
     def __str__(self):
         return self.username
