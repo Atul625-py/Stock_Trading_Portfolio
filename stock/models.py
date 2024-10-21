@@ -34,8 +34,7 @@ class User(AbstractBaseUser):
 
     user_id = models.BigAutoField(primary_key=True)
     email = models.EmailField(unique=True, default='defaultemail@example.com')
-    username = models.CharField(max_length=50, unique=True, default='defaultusername')
-    password_hash = models.CharField(max_length=255, default='defaultpassword')
+    username = models.CharField(max_length=50, unique=True, default='Trader')
     first_name = models.CharField(max_length=50, default='FirstName')
     last_name = models.CharField(max_length=50, default='LastName')
     phone = models.CharField(max_length=15, blank=True, default='000-000-0000')
@@ -100,6 +99,7 @@ class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('buy', 'Buy'),
         ('sell', 'Sell'),
+        ('bs', 'bought_then_sold')
     ]
 
     portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, default=None)

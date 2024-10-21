@@ -8,15 +8,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Pro Trader X</title>
-    <!-- Link to the main page's CSS -->
-    
     <link rel="stylesheet" href="{% static 'stock/css/home.css' %}" type="text/css" media="screen" >
-    <!-- Link to the navbar's CSS -->
     <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
 </head>
 <body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
-    
-
     <div class="container">
         <h1 class="home-title">Home</h1>
         <h2 class="your-stocks">Your Stocks</h2>
@@ -42,9 +37,12 @@
                         <td>Rs. {{ transaction.current_price }}</td>
                         <td>{{ transaction.profit_loss_possible|floatformat:2 }}%</td>
                         <td>
-                            <button class="buy-btn">Buy more</button>
-                            <button class="sell-btn">Sell</button>
-                        </td>
+                            <button class="buy-btn" data-stock-id="{{ transaction.stock.id }}" data-transaction-id="{{ transaction.id }}">Buy more</button>
+                            <a href="{% url 'sell-stock' transaction.id %}">
+                                <button class="sell-btn" data-stock-id="{{ transaction.stock.id }}" data-transaction-id="{{ transaction.id }}">
+                                    Sell
+                                </button>
+                            </a>                        </td>
                     </tr>
                 {% empty %}
                     <tr>
@@ -55,11 +53,26 @@
         </table>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $('.buy-btn').click(function() {
+            const stockId = $(this).data('stock-id');
+        
+            alert(`Buy that stock from here.`);
+            setTimeout(function() {
+                window.location.href = `/stocks`;  // Replace with actual URL pattern
+            }, 500);  
+        });
 
+        // Check if URL contains 'sold' parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('sold')) {
+            const amount = urlParams.get('amount');
+            alert(`Successfully sold stocks for Rs. ${amount}`);
+        }
 
-
+    </script>
 
 </body>
 </html>
-
 {% endblock body %}

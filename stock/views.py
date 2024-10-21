@@ -3,46 +3,63 @@ from django.http import HttpResponse
 from .forms import RegisterForm
 from django.contrib.auth.hashers import make_password
 from django.db.models import F, ExpressionWrapper, DecimalField
-from .models import Stock, Portfolio, Transaction, User
+from .models import Stock, Portfolio, Transaction, User, Watchlist
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .utils import fetch_and_load_stock_data  # Import your function
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.contrib.auth import login as auth_login
+from decimal import Decimal
 
 
-@csrf_exempt  # Disable CSRF for simplicity, you may want to handle CSRF tokens properly in production
+
+
+
+
+def profile(request):
+    return render(request, 'stock/profile.html')
+
+@login_required(login_url='/login/')
+def watchlist(request):
+    user = request.user
+    watchlist_items = Watchlist.objects.filter(user=user).select_related('stock')
+
+    return render(request, 'stock/watchlist.html', {'watchlist_items': watchlist_items})
+
+
+def stocks(request):
+    stocks = Stock.objects.all()  # Fetch all stocks from the database
+    return render(request, 'stock/stocks.html', {'stocks': stocks})
+
+def portfolio(request):
+    return render(request, 'stock/portfolio.html')
+
+@login_required(login_url='/login/')
+def transactions(request):
+    transactions = Transaction.objects.filter(portfolio__user=request.user).select_related('stock')
+    context = {
+        'transactions': transactions
+    }
+    return render(request, 'stock/transactions.html', context)
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+
+
+@csrf_exempt  
 def reload_stocks(request):
     if request.method == 'POST':
         fetch_and_load_stock_data()
         return JsonResponse({'status': 'Stocks reloaded successfully'})
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-
-# Create your views here.
-
-def add_transaction(request, portfolio_id):
-    if request.method == 'POST':
-        portfolio = get_object_or_404(Portfolio, pk=portfolio_id)
-        stock_id = request.POST['stock_id']
-        quantity = request.POST['quantity']
-        price_per_share = request.POST['price_per_share']
-        transaction_type = request.POST['transaction_type']
-        stock = get_object_or_404(Stock, pk=stock_id)
-        Transaction.objects.create(
-            portfolio=portfolio,
-            stock=stock,
-            quantity=quantity,
-            price_per_share=price_per_share,
-            transaction_type=transaction_type
-        )
-        return redirect('portfolio', portfolio_id=portfolio.id)
-    else:
-        stocks = Stock.objects.all()
-        return render(request, 'transactions.html', {'stocks': stocks})
 
 @login_required(login_url='/login/')
 def home(request):
@@ -59,11 +76,11 @@ def home(request):
         transactions = transactions.annotate(
             current_price=F('stock__current_price'),
             total_dividend=ExpressionWrapper(
-                F('stock__dividend_amount') * F('quantity'),
+                F('stock__dividend__dividend_amount') * F('quantity'),
                 output_field=DecimalField()
             ),
             profit_loss_possible=ExpressionWrapper(
-                (F('stock__dividend_amount') + F('stock__current_price') - F('price_per_share')) * F('quantity'),
+                (F('stock__dividend__dividend_amount') + F('stock__current_price') - F('price_per_share')) * F('quantity'),
                 output_field=DecimalField()
             )
         )
@@ -74,24 +91,30 @@ def home(request):
 
 def login(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.success(request, "Login successful! You can now view home page.")
+        
+        
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print(username, password)
 
-                return redirect('/home/')  # Redirect to the home page after successful login
-            else:
-                messages.error(request, "Invalid username or password.")
+        if (User.objects.filter(username=username).exists()) == False:
+            messages.error(request, "Invalid Username")
+            return render(request, 'stock/login.html')
+        user = User.objects.get(username=username)
+        
+        user_password = User.objects.get(username=username).password
+        if user_password == password:
+            auth_login(request, user)
+            messages.success(request, "Login successful! You can now view home page.")
+
+            return redirect(home)  # Redirect to the home page after successful login
         else:
-            messages.error(request, "Invalid username or password.")
+            messages.error(request, "Invalid password.")
+        
     else:
         form = AuthenticationForm()
     
-    return render(request, 'stock/login.html', {'form': form})
+    return render(request, 'stock/login.html')
 
 def register(request):
     if request.method == 'POST':
@@ -127,30 +150,123 @@ def register(request):
             phone=phone,
         )
         new_user.save() 
+        new_portfolio = Portfolio(
+            user = new_user
+
+        )
+        new_portfolio.save()
 
         messages.success(request, "Registration successful! You can now log in.")
         return redirect('login')  # Redirect to login page after successful registration
 
     return render(request, 'stock/register.html')
 
-def profile(request):
-    return render(request, 'stock/profile.html')
-
-def watchlist(request):
-    return render(request, 'stock/watchlist.html')
 
 
-def stocks(request):
-    stocks = Stock.objects.all()  # Fetch all stocks from the database
-    return render(request, 'stock/stocks.html', {'stocks': stocks})
+# Purchase Stock View
+@login_required(login_url='/login/')
+@csrf_exempt
+def purchase_stock(request):
+    if request.method == 'POST':
+        stock_id = request.POST.get('stock_id')
+        quantity = int(request.POST.get('quantity'))
 
-def portfolio(request):
-    return render(request, 'stock/portfolio.html')
+        # Get the stock and user's portfolio
+        stock = get_object_or_404(Stock, id=stock_id)
+        portfolio = get_object_or_404(Portfolio, user=request.user)  # Ensure the user has a portfolio
 
-def transactions(request):
-    return render(request, 'stock/transactions.html')
+        # Ensure sufficient stock is available
+        if quantity > stock.quantity:
+            return JsonResponse({'status': 'Not enough stock available to complete the purchase.'}, status=400)
+
+        # Update stock quantity (decrease the quantity of the stock)
+        stock.quantity -= quantity
+        stock.save()
+
+        # Calculate the total price of the purchase
+        total_price = Decimal(quantity) * stock.current_price
+
+        # Create the transaction
+        Transaction.objects.create(
+            portfolio=portfolio,
+            stock=stock,
+            transaction_type='buy',
+            quantity=quantity,
+            price_per_share=stock.current_price
+        )
+
+        return JsonResponse({'status': 'Stock purchased successfully!'})
+
+    return JsonResponse({'status': 'Invalid request'}, status=400)
+
+# Add to Watchlist View
+@login_required(login_url='/login/')
+@csrf_exempt
+def add_to_watchlist(request):
+    if request.method == 'POST':
+        stock_id = request.POST.get('stock_id')
+        stock = get_object_or_404(Stock, id=stock_id)
+
+        # Check if the stock is already in the user's watchlist
+        if Watchlist.objects.filter(user=request.user, stock=stock).exists():
+            return JsonResponse({'status': 'Stock is already in your watchlist.'}, status=400)
+
+        # Add stock to watchlist
+        watchlist_item = Watchlist.objects.create(user=request.user, stock=stock)
+        return JsonResponse({'status': 'Stock added to watchlist!'})
+
+    return JsonResponse({'status': 'Invalid request'}, status=400)
+
+@login_required(login_url='/login/')
+@csrf_exempt
+def remove_from_watchlist(request):
+    if request.method == 'POST':
+        stock_id = request.POST.get('stock_id')
+        stock = get_object_or_404(Stock, id=stock_id)  # Ensure the stock exists
+
+        try:
+            watchlist_item = Watchlist.objects.get(user=request.user, stock=stock)
+            watchlist_item.delete()  # Remove the stock from the watchlist
+            return JsonResponse({'status': f'{stock.name} removed from your watchlist.'})
+        except Watchlist.DoesNotExist:
+            return JsonResponse({'status': f'{stock.name} is not in your watchlist.'})
+
+    return JsonResponse({'status': 'Invalid request.'})
 
 
-def user_logout(request):
-    logout(request)
-    return redirect('login')
+
+@login_required(login_url='/login/')
+def sell_stock(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id, portfolio__user=request.user)
+
+    if transaction.transaction_type != 'buy' or transaction.quantity == 0:
+        messages.error(request, 'No stocks to sell in this transaction.')
+        return redirect('home')  # Assuming 'home' is the main page
+
+    stock = transaction.stock
+
+    total_amount_obtained = transaction.quantity * stock.current_price
+
+    user = request.user
+    user.budget += total_amount_obtained
+    user.save()
+
+    stock.quantity += transaction.quantity
+    stock.save()
+    new_transaction = Transaction(
+        portfolio = transaction.portfolio,
+        stock = transaction.stock,
+        transaction_type = 'sell',
+        quantity = transaction.quantity,
+        price_per_share = stock.current_price,
+
+    )
+    transaction.transaction_type = 'bs'
+    transaction.save()
+
+
+    new_transaction.save()
+
+    messages.success(request, f'Successfully sold stocks for Rs. {total_amount_obtained:.2f}.')
+
+    return redirect(f'/?sold=True&amount={total_amount_obtained:.2f}')

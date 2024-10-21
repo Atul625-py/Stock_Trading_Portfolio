@@ -14,10 +14,8 @@
     <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
 </head>
 
-
 <body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
     
-
     <div class="table-container">
         <h2 class="table-title">Transaction History</h2>
         <table class="transaction-table">
@@ -27,93 +25,29 @@
                     <th>Transaction ID</th>
                     <th>Stocks' name</th>
                     <th>Transaction Type <br> (buy or sell)</th>
-                    <th>Average price per stocks</th>
+                    <th>Average price per stock</th>
                     <th>No. of stocks bought or sold</th>
                     <th>Time of Transaction</th>
                     <th>Total price paid/received</th>
                 </tr>
             </thead>
             <tbody>
+                {% for transaction in transactions %}
                 <tr>
-                    <td>1</td>
-                    <td>101</td>
-                    <td>Apple(AAPL)</td>
-                    <td>Buy</td>
-                    <td>14,500</td>
-                    <td>50</td>
-                    <td>2024-09-22 10:15 AM</td>
-                    <td>725,000</td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.stock.name }} ({{ transaction.stock.symbol }})</td>
+                    <td>{{ transaction.get_transaction_type_display }}</td>
+                    <td>{{ transaction.price_per_share }}</td>
+                    <td>{{ transaction.quantity }}</td>
+                    <td>{{ transaction.transaction_date|date:"Y-m-d H:i A" }}</td>
+                    <td>{{ transaction.price_per_share|floatformat:2|add:":"|add:transaction.quantity|add:"total" }}</td>
                 </tr>
+                {% empty %}
                 <tr>
-                    <td>2</td>
-                    <td>102</td>
-                    <td>Tesla(TSLA)</td>
-                    <td>Sell</td>
-                    <td>59,500</td>
-                    <td>20</td>
-                    <td>2024-09-22 11:30 AM</td>
-                    <td>1,190,000</td>
+                    <td colspan="8">No transactions found.</td>
                 </tr>
-                <tr>
-                    <td>3</td>
-                    <td>103</td>
-                    <td>Microsoft(MSFT)</td>
-                    <td>Buy</td>
-                    <td>27,200</td>
-                    <td>30</td>
-                    <td>2013-09-22 10:10 AM</td>
-                    <td>816,000</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>104</td>
-                    <td>Amazon(AMZN)</td>
-                    <td>Sell</td>
-                    <td>11,150</td>
-                    <td>10</td>
-                    <td>2015-09-22 10:45 PM</td>
-                    <td>111,500</td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>105</td>
-                    <td>Google(GOOGL)</td>
-                    <td>Buy</td>
-                    <td>231,000</td>
-                    <td>15</td>
-                    <td>2024-09-22 03:15 PM</td>
-                    <td>3,465,000</td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td>106</td>
-                    <td>Reliance(RELI)</td>
-                    <td>Buy</td>
-                    <td>2,100</td>
-                    <td>40</td>
-                    <td>2024-09-22 02:00 AM</td>
-                    <td>108,000</td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td>107</td>
-                    <td>TCS(TCS)</td>
-                    <td>Sell</td>
-                    <td>4,000</td>
-                    <td>25</td>
-                    <td>2014-09-22 03:30 PM</td>
-                    <td>100,000</td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td>108</td>
-                    <td>Infosys(INFY)</td>
-                    <td>Buy</td>
-                    <td>1,800</td>
-                    <td>35</td>
-                    <td>2025-09-22 05:15 AM</td>
-                    <td>63,000</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

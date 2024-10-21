@@ -1,7 +1,7 @@
 import json
 import os
 from django.utils import timezone
-from .models import Stock
+from .models import Stock, Dividend
 
 def fetch_and_load_stock_data():
     json_file_path = "./stock/stocks.json"
@@ -33,7 +33,9 @@ def fetch_and_load_stock_data():
                     'current_price': current_price,
                 }
             )
-
+            dividend, created = Dividend.objects.update_or_create(
+                stock = stock,
+            )
             if created:
                 print(f"Created new stock entry: {symbol}")
             else:

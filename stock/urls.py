@@ -12,8 +12,11 @@ urlpatterns = [
     path('portfolio/', views.portfolio, name='portfolio'),
     path('transactions/', views.transactions, name='transactions'),
     path('reload-stocks/', views.reload_stocks, name='reload_stocks'),
-    path('logout/', views.logout, name='logout'),
-
-        
+    path('logout/', views.user_logout, name='logout'),
+    path('purchase_stock/', views.purchase_stock, name='purchase_stock'),
+    path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
+    path('remove_from_watchlist/', views.remove_from_watchlist, name='remove_from_watchlist'),
+    path('sell/<int:transaction_id>/', views.sell_stock, name='sell-stock'),
+    
 
 ]
