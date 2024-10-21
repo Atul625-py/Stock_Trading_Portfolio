@@ -20,7 +20,7 @@
     <div class="container">
         <h1 class="home-title">Home</h1>
         <h2 class="your-stocks">Your Stocks</h2>
-        <table class="stocks-table">
+        <table class="stocks-table" border="1">
             <thead>
                 <tr>
                     <th>Sr. no.</th>
@@ -33,20 +33,24 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Repeat rows as needed -->
-                <tr>
-                    <td>1.</td>
-                    <td>Reliance</td>
-                    <td>4</td>
-                    <td>Rs. 50</td>
-                    <td>Rs. 60</td>
-                    <td>20%</td>
-                    <td>
-                        <button class="buy-btn">Buy more</button>
-                        <button class="sell-btn">Sell</button>
-                    </td>
-                </tr>
-                <!-- Add more rows -->
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ transaction.stock.name }}</td>
+                        <td>{{ transaction.quantity }}</td>
+                        <td>Rs. {{ transaction.price_per_share }}</td>
+                        <td>Rs. {{ transaction.current_price }}</td>
+                        <td>{{ transaction.profit_loss_possible|floatformat:2 }}%</td>
+                        <td>
+                            <button class="buy-btn">Buy more</button>
+                            <button class="sell-btn">Sell</button>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">No stocks found.</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

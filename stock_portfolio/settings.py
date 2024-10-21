@@ -82,12 +82,9 @@ WSGI_APPLICATION = 'stock_portfolio.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        'NAME': 'database_schema',              
-        'USER': 'root',                   
-        'PASSWORD': 'Atul@2005',      
-        'HOST': 'localhost',                   
-        'PORT': '3306',  
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": 'db.sqlite3',
+  
     },
 }
 
@@ -140,3 +137,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+
+LOGIN_URL = '/login/'  # The URL of your login page
+LOGIN_REDIRECT_URL = '/home/' 
+AUTH_USER_MODEL = 'stock.User'

@@ -12,6 +12,8 @@ urlpatterns = [
     path('portfolio/', views.portfolio, name='portfolio'),
     path('transactions/', views.transactions, name='transactions'),
     path('reload-stocks/', views.reload_stocks, name='reload_stocks'),
+    path('logout/', views.logout, name='logout'),
+
         
 
 ]
