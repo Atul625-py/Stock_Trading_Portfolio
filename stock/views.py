@@ -25,6 +25,7 @@ def profile(request):
         if 'image' in request.FILES:
             user.image = request.FILES['image']
             user.save()
+            return redirect('profile')
         form = UserUpdateForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
