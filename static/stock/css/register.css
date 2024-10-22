@@ -13,6 +13,7 @@ body {
     height: 100vh; /* Full height of the viewport */
     padding: 20px;
     box-sizing: border-box;
+    margin-top: 80px;
 }
 
 .register-form {

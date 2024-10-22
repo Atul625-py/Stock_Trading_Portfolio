@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django_browser_reload",
     'stock',
 ]
 
@@ -54,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
+
 ]
 
 ROOT_URLCONF = 'stock_portfolio.urls'
@@ -141,3 +144,4 @@ STATICFILES_DIRS = [
 LOGIN_URL = '/login/'  # The URL of your login page
 LOGIN_REDIRECT_URL = '/home/' 
 AUTH_USER_MODEL = 'stock.User'
+

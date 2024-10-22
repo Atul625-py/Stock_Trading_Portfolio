@@ -4,6 +4,11 @@ from .models import User
 from django.contrib.auth.forms import AuthenticationForm
 
 
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'budget', 'image']
+
 class RegisterForm(forms.ModelForm):
     class Meta:
         model = User

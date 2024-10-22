@@ -10,25 +10,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Pro Trader X</title>
     <link rel="stylesheet" href="{% static 'stock/css/portfolio.css' %}" type="text/css" media="screen" >
-    <!-- Link to the navbar's CSS -->
     <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
-
 </head>
 <body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
 
-    
-
-    <!-- Main Content -->
     <section class="container">
         <h2 class="heading">Portfolio</h2>
 
-        <!-- Chart Section -->
         <div class="portfolio-section">
             <div class="chart-container">
                 <img src="{% static 'stock/images/graph.png' %}"  alt="Stock Chart" class="chart-image">
             </div>
 
-            <!-- Summary Section -->
             <div class="summary-container">
                 <blockquote class="quote">
                     "The four most expensive words in the English language are this time it’s different."
@@ -37,11 +30,11 @@
 
                 <div class="summary-box">
                     <h3>Summary</h3>
-                    <p><strong>Username:</strong> Bob129</p>
-                    <p><strong>Member since:</strong> 17/09/2024</p>
-                    <p><strong>Portfolio ID:</strong> 12868654</p>
-                    <p><strong>Profit/Loss:</strong> <span class="profit">+21%</span></p>
-                    <p><strong>Profit/Loss in Rupees:</strong> Rs. 91,000</p>
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Member since:</strong> {{ user.created_at|date:"d/m/Y" }}</p>
+                    <p><strong>Portfolio ID:</strong> {{ portfolio.portfolio_id }}</p>
+                    <p><strong>Profit/Loss:</strong> <span class="profit">{{ total_profit_loss|floatformat:0 }}%</span></p>
+                    <p><strong>Profit/Loss in Rupees:</strong> Rs. {{ portfolio.profit_loss }}</p>
                     <p><strong>Transactions history:</strong> <a href="../transactions/">Click here</a></p>
                 </div>
             </div>

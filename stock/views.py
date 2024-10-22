@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from .forms import RegisterForm
+from .forms import RegisterForm, UserUpdateForm
 from django.contrib.auth.hashers import make_password
 from django.db.models import F, ExpressionWrapper, DecimalField
 from .models import Stock, Portfolio, Transaction, User, Watchlist
@@ -16,12 +16,30 @@ from django.contrib.auth import login as auth_login
 from decimal import Decimal
 
 
-
-
-
-
+@login_required(login_url='/login/')
 def profile(request):
-    return render(request, 'stock/profile.html')
+    user = get_object_or_404(User, email=request.user.email)
+    portfolio = get_object_or_404(Portfolio, user=user)
+
+    if request.method == 'POST':
+        if 'image' in request.FILES:
+            user.image = request.FILES['image']
+            user.save()
+        form = UserUpdateForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+
+    else:
+        form = UserUpdateForm(instance=user)
+
+    context = {
+        'user': user,
+        'portfolio': portfolio,
+        'form': form,
+    }
+    return render(request, 'stock/profile.html', context)
+
 
 @login_required(login_url='/login/')
 def watchlist(request):
@@ -35,8 +53,23 @@ def stocks(request):
     stocks = Stock.objects.all()  # Fetch all stocks from the database
     return render(request, 'stock/stocks.html', {'stocks': stocks})
 
+@login_required(login_url='/login/')
 def portfolio(request):
-    return render(request, 'stock/portfolio.html')
+    user = get_object_or_404(User, email=request.user.email)
+    portfolio = get_object_or_404(Portfolio, user=user)
+    transactions = Transaction.objects.filter(portfolio=portfolio)
+    
+    total_profit_loss = portfolio.profit_loss  # Assuming you have a method to calculate this
+    total_investment = sum(tx.price_per_share * tx.quantity for tx in transactions)  # Example for investment calculation
+
+    context = {
+        'user': user,
+        'portfolio': portfolio,
+        'transactions': transactions,
+        'total_profit_loss': total_profit_loss,
+        'total_investment': total_investment,
+    }
+    return render(request, 'stock/portfolio.html', context)
 
 @login_required(login_url='/login/')
 def transactions(request):
@@ -105,8 +138,6 @@ def login(request):
         user_password = User.objects.get(username=username).password
         if user_password == password:
             auth_login(request, user)
-            messages.success(request, "Login successful! You can now view home page.")
-
             return redirect(home)  # Redirect to the home page after successful login
         else:
             messages.error(request, "Invalid password.")
@@ -171,22 +202,23 @@ def purchase_stock(request):
         stock_id = request.POST.get('stock_id')
         quantity = int(request.POST.get('quantity'))
 
-        # Get the stock and user's portfolio
         stock = get_object_or_404(Stock, id=stock_id)
-        portfolio = get_object_or_404(Portfolio, user=request.user)  # Ensure the user has a portfolio
+        portfolio = get_object_or_404(Portfolio, user=request.user)
 
-        # Ensure sufficient stock is available
         if quantity > stock.quantity:
             return JsonResponse({'status': 'Not enough stock available to complete the purchase.'}, status=400)
 
-        # Update stock quantity (decrease the quantity of the stock)
+        total_price = Decimal(quantity) * stock.current_price
+
+        if total_price > portfolio.user.budget:
+            return JsonResponse({'status': 'Not enough budget to complete the purchase.'}, status=400)
+
         stock.quantity -= quantity
         stock.save()
 
-        # Calculate the total price of the purchase
-        total_price = Decimal(quantity) * stock.current_price
+        portfolio.user.budget -= total_price
+        portfolio.user.save()
 
-        # Create the transaction
         Transaction.objects.create(
             portfolio=portfolio,
             stock=stock,

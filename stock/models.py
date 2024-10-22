@@ -41,7 +41,7 @@ class User(AbstractBaseUser):
     role = models.CharField(max_length=5, choices=ROLES, default='user')
     budget = models.DecimalField(max_digits=15, decimal_places=2, default=5000.00)
     created_at = models.DateTimeField(default=timezone.now)
-    image = models.ImageField(default='./static/stock/images/profile.jpg')
+    image = models.ImageField(upload_to='static/stock/media/profile_pictures/', default='stock/media/profile_pictures/profile.jpg')
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -73,7 +73,7 @@ class User(AbstractBaseUser):
 # Portfolio model
 class Portfolio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    portfolio_id = models.BigAutoField(primary_key=True, default=100001)
+    portfolio_id = models.BigAutoField(primary_key=True)
     portfolio_name = models.CharField(max_length=100, default='My Portfolio')
     profit_loss = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
     created_at = models.DateTimeField(default=timezone.now)
@@ -101,7 +101,6 @@ class Transaction(models.Model):
         ('sell', 'Sell'),
         ('bs', 'bought_then_sold')
     ]
-
     portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, default=None)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None)
     transaction_type = models.CharField(max_length=4, choices=TRANSACTION_TYPES, default='buy')

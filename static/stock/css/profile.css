@@ -7,7 +7,6 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-image: url('../../Public/bg.jpg'); /* Replace with actual background path */
     background-repeat: repeat;
     background-size: cover;
     background-position: center;
