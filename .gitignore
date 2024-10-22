@@ -47,3 +47,6 @@ build/
 
 # Git Files
 *.orig
+
+static/stock/media
+db.sqlite3
