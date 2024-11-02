@@ -1,0 +1,54 @@
+{% extends './navbar.html' %}
+
+{% load static %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <link rel="stylesheet" href="{% static 'stock/css/payment_form.css' %}"> 
+    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}"> 
+
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
+    <div class="container">
+        <h1>Complete Your Payment</h1>
+        <form action="{% url 'payment_view' %}" method="POST" id="payment-form">
+            {% csrf_token %}
+            <label for="amount">Amount:</label>
+            <input type="number" name="amount" step="0.01" min="0.50" required>
+
+            <div id="card-element"><!-- Stripe will insert the card element here --></div>
+            <button type="submit">Pay</button>
+            <div class="error-message" id="card-errors" role="alert"></div>
+        </form>
+    </div>
+
+    <script>
+        var stripe = Stripe("{{ stripe_publishable_key }}");
+        var elements = stripe.elements();
+        var card = elements.create("card");
+        card.mount("#card-element");
+
+        var form = document.getElementById("payment-form");
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const { token, error } = await stripe.createToken(card);
+            if (error) {
+                document.getElementById('card-errors').textContent = error.message;  // Display error message
+            } else {
+                var hiddenInput = document.createElement("input");
+                hiddenInput.setAttribute("type", "hidden");
+                hiddenInput.setAttribute("name", "stripeToken");
+                hiddenInput.setAttribute("value", token.id);
+                form.appendChild(hiddenInput);
+                form.submit();
+            }
+        });
+    </script>
+</body>
+{% endblock %}

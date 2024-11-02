@@ -53,8 +53,8 @@
                         <button type="submit" class="change-btn">Change</button>
                     </div>
                     <div class="field">
-                        <span>Budget:</span>
-                        <input type="number" name="budget" value="{{ user.budget }}" step="0.01">
+                        <span>Wallet:</span>
+                        <input type="number" name="wallet" value="{{ user.budget }}" step="10">
                         <button type="submit" class="change-btn">Change</button>
                     </div>
                     <div class="field">
@@ -62,9 +62,9 @@
                         <input type="password" name="password" placeholder="New Password">
                         <button type="submit" class="change-btn">Change</button>
                     </div>
-                    <div class="field">
+                    <div class="field-user-since">
                         <span>User since:</span>
-                        <span class="value">{{ user.created_at|date:"d/m/Y" }}</span>
+                        <span class="value">{{ user.created_at|date:"F j, Y" }}</span>
                     </div>
                 </form>
             </div>

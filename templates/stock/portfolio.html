@@ -9,8 +9,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Pro Trader X</title>
-    <link rel="stylesheet" href="{% static 'stock/css/portfolio.css' %}" type="text/css" media="screen" >
-    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
+    <link rel="stylesheet" href="{% static 'stock/css/portfolio.css' %}" type="text/css" media="screen">
+    <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  <!-- Include jQuery -->
 </head>
 <body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
 
@@ -19,7 +20,8 @@
 
         <div class="portfolio-section">
             <div class="chart-container">
-                <img src="{% static 'stock/images/graph.png' %}"  alt="Stock Chart" class="chart-image">
+                <img id="portfolio-graph" src="{% static portfolio.graphs %}"  alt="Stock Chart" class="chart-image">
+                <button class="reload-button" id="reload-graph">Reload Graph</button>  <!-- Reload Button -->
             </div>
 
             <div class="summary-container">
@@ -33,13 +35,32 @@
                     <p><strong>Username:</strong> {{ user.username }}</p>
                     <p><strong>Member since:</strong> {{ user.created_at|date:"d/m/Y" }}</p>
                     <p><strong>Portfolio ID:</strong> {{ portfolio.portfolio_id }}</p>
-                    <p><strong>Profit/Loss:</strong> <span class="profit">{{ total_profit_loss|floatformat:0 }}%</span></p>
-                    <p><strong>Profit/Loss in Rupees:</strong> Rs. {{ portfolio.profit_loss }}</p>
+                    <p><strong>Profit/Loss:</strong> <span class="profit">{{ total_profit_loss_percentage|floatformat:2 }}%</span></p>
+                    <p><strong>Profit/Loss in Rupees:</strong> Rs. {{ total_profit_loss }}</p>
+                    <p><strong>Total Investment:</strong> Rs. {{ total_investment }}</p>
                     <p><strong>Transactions history:</strong> <a href="../transactions/">Click here</a></p>
                 </div>
             </div>
         </div>
     </section>
+
+    <script>
+        $(document).ready(function() {
+            $('#reload-graph').click(function() {
+                $.ajax({
+                    url: "{% url 'update_graph' portfolio.portfolio_id %}",  // Replace with your URL pattern
+                    type: 'GET',
+                    success: function(data) {
+                        // Update the graph image source with a new timestamp to prevent caching
+                        $('#portfolio-graph').attr('src', data.graph_url + '?t=' + new Date().getTime());
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error reloading graph: " + error);
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>

@@ -1,0 +1,9 @@
+Django>=4.0,<5.0
+djangorestframework>=3.12,<4.0
+django-fast-reload>=0.0.1
+celery>=5.2,<6.0
+redis>=4.0,<5.0  # If using Redis as a broker
+psycopg2-binary>=2.9,<3.0  # PostgreSQL adapter (or use another database adapter)
+django-cors-headers>=3.10,<4.0  # If you're using CORS
+djangorestframework-simplejwt>=5.0,<6.0  # For JWT authentication
+pillow>=9.0,<10.0  # For image handling

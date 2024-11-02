@@ -36,7 +36,7 @@
                     <td>{{ item.stock.name }} ({{ item.stock.symbol }})</td>
                     <td>{{ item.stock.quantity }}</td>
                     <td><input type="number" class="quantity-input" value="0" min="0" max="{{ item.stock.quantity }}"></td>
-                    <td>{{ item.stock.current_price|floatformat:2 }}</td>
+                    <td>Rs. {{ item.stock.current_price|floatformat:2 }}</td>
                     <td class="total-price" data-stock-id="{{ item.stock.id }}">0.00</td>
                     <td>
                         <button class="purchase-btn" data-stock-id="{{ item.stock.id }}">Purchase</button>

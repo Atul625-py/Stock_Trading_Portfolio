@@ -17,6 +17,8 @@ urlpatterns = [
     path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
     path('remove_from_watchlist/', views.remove_from_watchlist, name='remove_from_watchlist'),
     path('sell/<int:transaction_id>/', views.sell_stock, name='sell-stock'),
-    
+    path('update-graph/<int:portfolio_id>/', views.update_graph, name='update_graph'),
+    path("payment/", views.payment_view, name="payment_view"),
+    path("success/", views.success_page, name="success_page"),
 
 ]

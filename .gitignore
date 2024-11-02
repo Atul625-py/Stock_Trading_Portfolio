@@ -49,4 +49,8 @@ build/
 *.orig
 
 static/stock/media
+static/stock/graphs
+
 db.sqlite3
+
+*.sqlite3

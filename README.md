@@ -30,7 +30,7 @@ To get started with this project, follow the instructions below.
     ```
 3. Install the required dependencies:
     ```bash
-    pip install django
+    pip install -r requirements.txt
     ```
 4. Run the Django server:
     ```bash

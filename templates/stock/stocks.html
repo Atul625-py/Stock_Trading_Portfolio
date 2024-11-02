@@ -12,23 +12,21 @@
     <link rel="stylesheet" href="{% static 'stock/css/stocks.css' %}" type="text/css" media="screen">
     <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 </head>
 <body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
     
     <!-- Main Content -->
     <section class="container">
         <h2 class="heading">All Stocks</h2>
-        <button id="reload-stocks-btn">Reset All Stocks to Default</button>
+        <button class="reload-stocks-btn" id="reload-stocks-btn">Reload Stocks</button>
 
         <p id="status-message"></p>
-            <!-- Include jQuery -->
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>       
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>       
 
         <script>
             $(document).ready(function() {
                 $('#reload-stocks-btn').click(function() {
-
                     $.ajax({
                         url: "{% url 'reload_stocks' %}",
                         type: 'POST',
@@ -54,8 +52,12 @@
                 <th>Sr. No.</th>
                 <th>Name of Stocks</th>
                 <th>No. of stocks available</th>
-                <th>Current price per stock</th>
-                <th>Enter Quantity</th> <!-- New column for quantity input -->
+                <th>Current Price</th>
+                <th>Open Price</th>
+                <th>High Price</th>
+                <th>Low Price</th>
+                <th>Previous Close</th>
+                <th>Enter Quantity</th>
                 <th>Total Price</th>
                 <th>Options</th>
             </tr>
@@ -64,10 +66,13 @@
             {% for stock in stocks %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td>{{ stock.name }} ({{ stock.symbol }})</td>
+                <td>{{ stock.name }}</td>
                 <td>{{ stock.quantity }}</td>
-                <!-- Add class and data-stock-id for the price field -->
-                <td class="current-price" data-stock-id="{{ stock.id }}">{{ stock.current_price }}</td>
+                <td class="current-price" data-stock-id="{{ stock.id }}">Rs. {{ stock.current_price }}</td>
+                <td>Rs. {{ stock.open_price }}</td>
+                <td>Rs. {{ stock.high_price }}</td>
+                <td>Rs. {{ stock.low_price }}</td>
+                <td>Rs. {{ stock.previous_close }}</td>
                 
                 <!-- Input for quantity -->
                 <td>
@@ -84,7 +89,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7">No stocks available.</td>
+                <td colspan="11">No stocks available.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -92,27 +97,23 @@
 
     <script>
         $(document).ready(function() {
-            // Function to calculate and update total price
             function updateTotalPrice(stockId) {
                 const quantity = parseInt($(`.stock-quantity-input[data-stock-id="${stockId}"]`).val());
                 const currentPrice = parseFloat($(`.current-price[data-stock-id="${stockId}"]`).text());
 
-                // Check if quantity and currentPrice are valid
                 if (!isNaN(quantity) && !isNaN(currentPrice) && quantity > 0) {
                     const totalPrice = quantity * currentPrice;
                     $(`.total-price[data-stock-id="${stockId}"]`).text(totalPrice.toFixed(2));
                 } else {
-                    $(`.total-price[data-stock-id="${stockId}"]`).text('0.00'); // Reset if input is invalid
+                    $(`.total-price[data-stock-id="${stockId}"]`).text('0.00');
                 }
             }
 
-            // When user enters a quantity, update total price
             $('.stock-quantity-input').on('input', function() {
                 const stockId = $(this).data('stock-id');
                 updateTotalPrice(stockId);
             });
 
-            // Handle purchase button click
             $('.purchase-btn').click(function() {
                 const stockId = $(this).data('stock-id');
                 const quantity = $(`.stock-quantity-input[data-stock-id="${stockId}"]`).val();
@@ -130,7 +131,7 @@
                         },
                         success: function(response) {
                             alert(response.status);
-                            location.reload(); // Optional: reload page to update stock availability
+                            location.reload();
                         },
                         error: function(error) {
                             alert('Failed to purchase stock.');
@@ -141,7 +142,6 @@
                 }
             });
 
-            // Handle add to watchlist button click
             $('.watchlist-btn').click(function() {
                 const stockId = $(this).data('stock-id');
 

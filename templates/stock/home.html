@@ -35,7 +35,7 @@
                         <td>{{ transaction.quantity }}</td>
                         <td>Rs. {{ transaction.price_per_share }}</td>
                         <td>Rs. {{ transaction.current_price }}</td>
-                        <td>{{ transaction.profit_loss_possible|floatformat:2 }}%</td>
+                        <td>Rs. {{ transaction.profit_loss_possible|floatformat:2 }}</td>
                         <td>
                             <button class="buy-btn" data-stock-id="{{ transaction.stock.id }}" data-transaction-id="{{ transaction.id }}">Buy more</button>
                             <a href="{% url 'sell-stock' transaction.id %}">

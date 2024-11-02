@@ -145,3 +145,5 @@ LOGIN_URL = '/login/'  # The URL of your login page
 LOGIN_REDIRECT_URL = '/home/' 
 AUTH_USER_MODEL = 'stock.User'
 
+STRIPE_SECRET_KEY = ' '
+STRIPE_PUBLISHABLE_KEY = ' '

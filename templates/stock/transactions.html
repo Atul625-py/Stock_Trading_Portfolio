@@ -35,12 +35,12 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ transaction.id }}</td>
-                    <td>{{ transaction.stock.name }} ({{ transaction.stock.symbol }})</td>
+                    <td>{{ transaction.stock.name }}</td>
                     <td>{{ transaction.get_transaction_type_display }}</td>
-                    <td>{{ transaction.price_per_share }}</td>
+                    <td>Rs. {{ transaction.price_per_share }}</td>
                     <td>{{ transaction.quantity }}</td>
                     <td>{{ transaction.transaction_date|date:"Y-m-d H:i A" }}</td>
-                    <td>{{ transaction.price_per_share|floatformat:2|add:":"|add:transaction.quantity|add:"total" }}</td>
+                    <td>Rs. {{ transaction.total_price }}</td>
                 </tr>
                 {% empty %}
                 <tr>

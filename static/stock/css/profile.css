@@ -1,151 +1,157 @@
-/* Global styles */
-* {
+body {
+    font-family: Arial, sans-serif; /* Set a base font for the body */
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    background-size: cover; /* Cover the entire body with background */
+    color: #333; /* Base text color */
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background-repeat: repeat;
-    background-size: cover;
-    background-position: center;
-    padding-top: 140px;
-}
-
-/* Navbar */
 .navbar {
     width: 100%;
     height: 60px;
-    position: absolute;
+    background-color: #f1f1f1;
+    position: relative; /* Change to relative to push content down */
     top: 0;
     left: 0;
+    z-index: 10; /* Ensure the navbar is above other content */
 }
 
-
-
-/* Profile Container */
 .profile-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin: 0 auto;
-    width: 90%;
-    max-width: 1200px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    margin-bottom: 50px;
+    display: flex; /* Use flexbox to arrange left and right sections */
+    max-width: 1200px; /* Maximum width for the profile container */
+    margin: 30px auto; /* Center the container with margin */
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    overflow: hidden; /* Prevent content overflow */
+    margin-top: 40px; /* Add some space below the navbar */
 }
 
-/* Left section (Profile Picture and User Info) */
 .profile-left {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    width: 30%;
-    margin-right: 30px; /* Add spacing between sections */
+    flex: 1; /* Allow the left section to take up one portion */
+    padding: 20px; /* Padding for left section */
+    border-right: 1px solid #ddd; /* Right border for separation */
 }
 
 .profile-pic-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Ensures content is centered */
-    margin-bottom: 20px;
+    text-align: center; /* Center-align the profile picture */
+    margin-bottom: 20px; /* Space below the profile picture */
 }
 
 .profile-pic {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 2px solid #ccc;
-    margin-bottom: 10px; /* Add margin below the profile picture */
+    width: 120px; /* Set a fixed width for profile picture */
+    height: 120px; /* Set a fixed height for profile picture */
+    border-radius: 50%; /* Make the profile picture circular */
+    object-fit: cover; /* Maintain aspect ratio */
+    border: 2px solid #ddd; /* Border around the picture */
 }
 
 .change-pic-btn {
-    padding: 5px 15px;
-    background-color: teal;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: inline-block;
-    margin-top: 30px; /* Ensure button is placed just below profile picture */
-    text-align: center;
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white; /* Text color for the button */
+    border: none; /* Remove border */
+    padding: 10px 15px; /* Padding for the button */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer on hover */
+    margin-top: 10px; /* Space above the button */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.change-pic-btn:hover {
+    background-color: #0056b3; /* Darker shade on hover */
 }
 
 .user-card {
-    background-color: teal;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    margin-top: 20px;
+    margin-top: 40px; /* Space above user card */
+    font-size: 1.1em; /* Slightly larger font for user card */
 }
 
-/* Right section (Profile Details) */
+.user-card p {
+    margin: 15px 0; /* Increased space between paragraphs */
+}
+
 .profile-right {
-    width: 65%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
+    flex: 2; /* Allow the right section to take up two portions */
+    padding: 20px; /* Padding for right section */
 }
 
-
-h2 {
-    font-size: 28px;
-    color: teal;
-    margin-bottom: 20px;
-    text-align: center;
+.profile-details {
+    margin-top: 20px; /* Space above the profile details */
 }
 
-/* Profile Details Section */
-.profile-details .field {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: rgba(0, 128, 128, 0.1);
-    width: 100%;
+.field {
+    display: flex; /* Use flexbox for field alignment */
+    align-items: center; /* Align items in the center vertically */
+    justify-content: space-between; /* Space items evenly */
+    margin-bottom: 20px; /* Increased space between fields */
 }
 
 .field span {
-    flex: 1; /* Ensures the text occupies available space */
-    margin-right: 40px; /* Adds space between text and Change button */
-    white-space: nowrap; /* Prevents text from wrapping */
+    display: block; /* Keep label as a block */
+    font-weight: bold; /* Bold font for labels */
+    margin-right: 15px; /* Space to the right of the label */
+    font-size: 1.1em; /* Slightly larger font for labels */
+    width: 30%; /* Set width for labels */
+}
+.field-user-since {
+    display: flex; /* Use flexbox for field alignment */
+    align-items: left; /* Align items in the center vertically */
+    justify-content: space-between; /* Space items evenly */
+    margin-bottom: 20px; /* Increased space between fields */
 }
 
-.field span.value {
-    font-weight: bold;
+.field-user-since span {
+    display: block; /* Keep label as a block */
+    font-weight: bold; /* Bold font for labels */
+    margin-right: 1px; /* Space to the right of the label */
+    font-size: 1.1em; /* Slightly larger font for labels */
+    width: 30%; /* Set width for labels */
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"] {
+    width: 60%; /* Adjust input width to fit in line */
+    height: 50px; /* Height for inputs */
+    padding: 12px; /* Padding inside the input */
+    border: 1px solid #ccc; /* Border for inputs */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1em; /* Font size for inputs */
+    transition: border-color 0.3s; /* Smooth border color transition */
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus {
+    border-color: #007bff; /* Change border color on focus */
 }
 
 .change-btn {
-    padding: 5px 10px;
-    background-color: teal;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 20px; /* Ensure the button is not too close to the text */
+    background-color: #28a745; /* Green button color */
+    color: white; /* Text color for button */
+    border: none; /* Remove border */
+    padding: 10px 15px; /* Increased padding for the button */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer on hover */
+    margin-left: 10px; /* Space between input and button */
+    transition: background-color 0.3s; /* Smooth background transition */
 }
 
-/* Save Changes Button */
-.save-changes-btn {
-    margin-top: 30px;
-    padding: 10px 20px;
-    background-color: purple;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 200px;
-    text-align: center;
-    margin: 30px auto 0; /* Center the button */
+.change-btn:hover {
+    background-color: #218838; /* Darker shade on hover */
 }
+
+.save-changes-btn {
+    background-color: #17a2b8; /* Teal button color */
+    color: white; /* Text color for button */
+    border: none; /* Remove border */
+    padding: 10px 15px; /* Padding for the button */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer on hover */
+    margin-top: 20px; /* Space above button */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
 .save-changes-btn:hover {
-    background-color: #5e005e;
+    background-color: #138496; /* Darker shade on hover */
 }

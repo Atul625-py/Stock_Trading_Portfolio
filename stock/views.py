@@ -3,17 +3,23 @@ from django.http import HttpResponse
 from .forms import RegisterForm, UserUpdateForm
 from django.contrib.auth.hashers import make_password
 from django.db.models import F, ExpressionWrapper, DecimalField
-from .models import Stock, Portfolio, Transaction, User, Watchlist
+from .models import Stock, Portfolio, Transaction, User, Watchlist, Payment
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .utils import fetch_and_load_stock_data  # Import your function
+from .utils import fetch_and_load_stock_data, make_graph  # Import your function
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth import login as auth_login
 from decimal import Decimal
+import stripe
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 
 @login_required(login_url='/login/')
@@ -22,6 +28,10 @@ def profile(request):
     portfolio = get_object_or_404(Portfolio, user=user)
 
     if request.method == 'POST':
+        if 'wallet' in request.POST:
+            messages.success(request, "Redirecting to payment page.")
+            return redirect('../payment/')
+
         if 'image' in request.FILES:
             user.image = request.FILES['image']
             user.save()
@@ -56,12 +66,32 @@ def stocks(request):
 
 @login_required(login_url='/login/')
 def portfolio(request):
+
+
     user = get_object_or_404(User, email=request.user.email)
     portfolio = get_object_or_404(Portfolio, user=user)
     transactions = Transaction.objects.filter(portfolio=portfolio)
     
-    total_profit_loss = portfolio.profit_loss  # Assuming you have a method to calculate this
-    total_investment = sum(tx.price_per_share * tx.quantity for tx in transactions)  # Example for investment calculation
+    total_investment = sum(
+        tx.price_per_share * tx.quantity
+        for tx in transactions
+        if tx.transaction_type in ('buy', 'bs')
+    )
+
+    total_investment_pnl = sum(
+        tx.price_per_share * tx.quantity
+        for tx in transactions
+        if tx.transaction_type in ('bs')
+    )
+    portfolio.profit_loss = 0
+    for transaction in transactions:
+        if transaction.transaction_type in ('sell'):
+            portfolio.profit_loss += transaction.total_price
+        elif transaction.transaction_type in ('bs'):
+            portfolio.profit_loss -= transaction.total_price
+
+    total_profit_loss = portfolio.profit_loss 
+    portfolio.save()
 
     context = {
         'user': user,
@@ -69,6 +99,7 @@ def portfolio(request):
         'transactions': transactions,
         'total_profit_loss': total_profit_loss,
         'total_investment': total_investment,
+        'total_profit_loss_percentage': (total_profit_loss/total_investment_pnl)*100
     }
     return render(request, 'stock/portfolio.html', context)
 
@@ -195,7 +226,6 @@ def register(request):
 
 
 
-# Purchase Stock View
 @login_required(login_url='/login/')
 @csrf_exempt
 def purchase_stock(request):
@@ -225,7 +255,8 @@ def purchase_stock(request):
             stock=stock,
             transaction_type='buy',
             quantity=quantity,
-            price_per_share=stock.current_price
+            price_per_share=stock.current_price,
+            total_price = quantity*stock.current_price,
         )
 
         return JsonResponse({'status': 'Stock purchased successfully!'})
@@ -292,6 +323,7 @@ def sell_stock(request, transaction_id):
         transaction_type = 'sell',
         quantity = transaction.quantity,
         price_per_share = stock.current_price,
+        total_price = transaction.quantity*stock.current_price,
 
     )
     transaction.transaction_type = 'bs'
@@ -303,3 +335,66 @@ def sell_stock(request, transaction_id):
     messages.success(request, f'Successfully sold stocks for Rs. {total_amount_obtained:.2f}.')
 
     return redirect(f'/?sold=True&amount={total_amount_obtained:.2f}')
+
+@login_required(login_url='/login/')
+def update_graph(request, portfolio_id):
+    # Logic to update the graph for the given portfolio
+    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
+    make_graph(portfolio)  # Call your function to regenerate the graph
+
+    graph_url = portfolio.graphs.url  # Get the updated graph URL
+    return JsonResponse({'graph_url': graph_url})
+
+@login_required(login_url='/login/')
+def success_page(request):
+
+    latest_payment = Payment.objects.filter(user=request.user).order_by('-timestamp').first()
+
+    if latest_payment and latest_payment.success:
+        transaction_id = latest_payment.stripe_charge_id
+        amount = latest_payment.amount
+        date = latest_payment.timestamp.strftime('%Y-%m-%d %H:%M:%S')  # Format date if needed
+    else:
+        transaction_id = "N/A"
+        amount = 0.00
+        date = "N/A"
+
+    return render(request, 'stock/success_page.html', {
+        'transaction_id': transaction_id,
+        'amount': amount,
+        'date': date,
+    })
+
+
+def payment_view(request):
+    if request.method == "POST":
+        token = request.POST.get("stripeToken")
+        amount = int(float(request.POST.get("amount")) * 100)  # Convert amount to cents
+
+        try:
+            charge = stripe.Charge.create(
+                amount=amount,
+                currency="inr",  # Change to "inr" for Indian Rupees
+                source=token,
+                description="Payment Description",
+            )
+
+            payment = Payment.objects.create(
+                user=request.user,
+                amount=amount / 100,  # Convert back to dollars for storage
+                stripe_charge_id=charge.id,
+                success=True
+            )
+
+            user = User.objects.get(user=request.user)  
+            user.budget += payment.amount  
+            user.save()  
+
+            messages.success(request, "Payment Successful! Your budget has been updated.")
+            return redirect("success_page")
+
+        except stripe.error.CardError as e:
+            messages.error(request, f"Your card was declined: {e.error.message}")
+            return redirect("payment_view")
+
+    return render(request, "stock/payment_form.html", {"stripe_publishable_key": settings.STRIPE_PUBLISHABLE_KEY})
