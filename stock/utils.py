@@ -19,27 +19,31 @@ import yfinance as yf
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import logging
+from django.db import transaction
+
 
 logger = logging.getLogger(__name__)
-
-
-
-
-
 
 
 API_KEY = 'csiinh9r01qt46e7uh9gcsiinh9r01qt46e7uha0'
 BASE_URL = 'https://finnhub.io/api/v1/quote'
 
 stock_symbols = [
-    'IBM', 'AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'BRK.B', 'NVDA', 'JPM',
-    'V', 'JNJ', 'UNH', 'PG', 'HD', 'DIS', 'PYPL', 'VZ', 'INTC', 'CMCSA', 'ADBE',
-    'NFLX', 'NKE', 'T', 'MRK', 'XOM', 'PEP', 'CSCO', 'KO', 'ABT', 'PFE', 'CVX',
-    'MDT', 'WMT', 'TMO', 'TXN', 'QCOM', 'COST', 'LLY', 'SBUX', 'NOW', 'AMGN',
-    'INTU', 'ISRG', 'MDLZ', 'ATVI', 'SNAP', 'BKNG', 'GILD', 'SHOP', 'ZM', 'ADP',
-    'LRCX', 'NEM', 'SPGI', 'C', 'MS', 'USB', 'SCHW'
+    'AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'GOOGL', 'META', 'BRK.B', 'JPM', 'V',
+    'JNJ', 'UNH', 'PG', 'HD', 'DIS', 'PYPL', 'VZ', 'INTC', 'CMCSA', 'ADBE', 
+    'NFLX', 'NKE', 'T', 'MRK', 'XOM', 'PEP', 'CSCO', 'KO', 'ABT', 'PFE', 
+    'CVX', 'MDT', 'WMT', 'TMO', 'TXN', 'QCOM', 'COST', 'LLY', 'SBUX', 'NOW',
+    'AMGN', 'INTU', 'ISRG', 'MDLZ', 'ATVI', 'SNAP', 'BKNG', 'GILD', 'SHOP', 
+    'ZM', 'ADP', 'LRCX', 'NEM', 'SPGI', 'C', 'MS', 'USB', 'SCHW', 'F', 
+    'GM', 'BA', 'CAT', 'HON', 'IBM', 'MMM', 'GS', 'MSFT', 'ORCL', 'CRM',
+    'AIG', 'CVS', 'MCD', 'MO', 'BK', 'BMY', 'CL', 'COP', 'DD', 'DHR',
+    'DUK', 'EMR', 'EXC', 'FDX', 'GE', 'GM', 'HAL', 'HUM', 'IBM', 'INTC',
+    'LMT', 'LOW', 'MCO', 'MDLZ', 'MET', 'MMM', 'MS', 'NEE', 'NEE', 'NSC',
+    'PEP', 'PNC', 'PYPL', 'RTX', 'SBUX', 'SO', 'SPGI', 'TGT', 'TMO', 'TXN'
 ]
 
+
+@shared_task
 def fetch_and_load_stock_data():
     for symbol in stock_symbols:
         try:
@@ -58,13 +62,13 @@ def fetch_and_load_stock_data():
             high_price = data.get('h', 0)
             low_price = data.get('l', 0)
             previous_close = data.get('pc', 0)
-
-            stock, created = Stock.objects.update_or_create(
+                # Check if stock exists to maintain the quantity if present
+            stock, created = Stock.objects.get_or_create(
                 symbol=symbol,
                 defaults={
                     'name': symbol,
                     'market': 'N/A',
-                    'quantity': 100 ,
+                    'quantity': 100,
                     'current_price': current_price,
                     'open_price': open_price,
                     'high_price': high_price,
@@ -73,19 +77,26 @@ def fetch_and_load_stock_data():
                 }
             )
 
+            if not created:
+                stock.current_price = current_price
+                stock.open_price = open_price
+                stock.high_price = high_price
+                stock.low_price = low_price
+                stock.previous_close = previous_close
+                stock.save()
+
             Dividend.objects.update_or_create(stock=stock)
 
             if created:
                 print(f"Created new stock entry: {symbol}")
             else:
                 print(f"Updated stock entry: {symbol}")
-        except requests.RequestException as e:
-            print(f"Request error for {symbol}: {e}")
+                
         except Exception as e:
             print(f"An error occurred for {symbol}: {e}")
 
 @shared_task
-def fetch_and_load_stocks_periodically(delay=30):
+def fetch_and_load_stocks_periodically(delay=60):
     while True:
         fetch_and_load_stock_data()
         time.sleep(delay)

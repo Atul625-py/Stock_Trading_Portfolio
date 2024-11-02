@@ -99,7 +99,7 @@ def portfolio(request):
         'transactions': transactions,
         'total_profit_loss': total_profit_loss,
         'total_investment': total_investment,
-        'total_profit_loss_percentage': (total_profit_loss/total_investment_pnl)*100
+        'total_profit_loss_percentage': ((total_profit_loss/total_investment_pnl)*100 if total_investment != 0 else 0)
     }
     return render(request, 'stock/portfolio.html', context)
 
@@ -145,7 +145,7 @@ def home(request):
                 output_field=DecimalField()
             ),
             profit_loss_possible=ExpressionWrapper(
-                (F('stock__dividend__dividend_amount') + F('stock__current_price') - F('price_per_share')) * F('quantity'),
+                (F('stock__current_price') - F('price_per_share')) * F('quantity'),
                 output_field=DecimalField()
             )
         )
