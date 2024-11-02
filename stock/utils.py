@@ -3,18 +3,36 @@ from django.conf import settings
 import time
 from django.utils import timezone
 from .models import Stock, Dividend
+from django.shortcuts import render, get_object_or_404, redirect
 from celery import shared_task
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
+import numpy as np
+from xgboost import XGBRegressor
+import io
+from django.core.files.base import ContentFile
+import base64
+from datetime import datetime, timedelta
+import yfinance as yf
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+
+
+
 
 
 API_KEY = 'csiinh9r01qt46e7uh9gcsiinh9r01qt46e7uha0'
 BASE_URL = 'https://finnhub.io/api/v1/quote'
 
 stock_symbols = [
-    'IBM', 'AAPL', 'MSFT', 'AMZN', 'GOOGL', 'FB', 'TSLA', 'BRK.B', 'NVDA', 'JPM',
+    'IBM', 'AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'BRK.B', 'NVDA', 'JPM',
     'V', 'JNJ', 'UNH', 'PG', 'HD', 'DIS', 'PYPL', 'VZ', 'INTC', 'CMCSA', 'ADBE',
     'NFLX', 'NKE', 'T', 'MRK', 'XOM', 'PEP', 'CSCO', 'KO', 'ABT', 'PFE', 'CVX',
     'MDT', 'WMT', 'TMO', 'TXN', 'QCOM', 'COST', 'LLY', 'SBUX', 'NOW', 'AMGN',
@@ -76,23 +94,20 @@ def fetch_and_load_stocks_periodically(delay=30):
 # fetch_and_load_stocks_periodically(delay=60)
 
 
-
+@shared_task
 def make_graph(portfolio):
-    # Get transaction-wise PnL data
     pnl_data = portfolio.get_pnl_data()
 
-    # Prepare data for each sell transaction
     sell_transactions = []
     cumulative_pnl_list = []
     sell_count = 0
 
     for entry in pnl_data:
-        if entry['transaction_type'] == 'sell':  # Consider only 'sell' transactions
+        if entry['transaction_type'] == 'sell': 
             sell_transactions.append(f"Sell {sell_count + 1}")
             cumulative_pnl_list.append((entry['pnl']/entry['inv_pnl'])*100)
             sell_count += 1
 
-    # Plot the data
     plt.figure(figsize=(10, 5))
     plt.plot(sell_transactions, cumulative_pnl_list, marker='o')
     plt.title(f'Cumulative P&L per Sell Transaction for {portfolio.portfolio_name}')
@@ -110,3 +125,69 @@ def make_graph(portfolio):
     
     portfolio.graphs = graph_path
     portfolio.save()
+
+@shared_task
+def fetch_stock_data(stock_id):
+    stock = get_object_or_404(Stock, id=stock_id)
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=30)
+
+    try:
+        data = yf.download(stock.symbol, start=start_date, end=end_date, interval="1d")
+        if data.empty:
+            return {"status": "Error: No data found for the specified stock symbol."}
+        actual_data = data[['Open', 'High', 'Low', 'Close', 'Volume']]
+        graph_path = generate_stock_graph(stock.symbol, actual_data)
+        stock.image = graph_path
+        stock.save()
+        return {"status": "Success", "data": actual_data}
+    except Exception as e:
+        return {"status": f"Error fetching stock data: {str(e)}"}
+    
+@shared_task
+def generate_stock_graph(stock_symbol, actual_data):
+    actual_data.reset_index(drop=True, inplace=True)
+
+    x = actual_data[['Close']][1:-1]
+    actual_data['target'] = actual_data['Close'].shift(-1)
+    y = actual_data[['target']][1:-1]
+
+    y = y.ffill()
+    x = x.ffill()
+    x = x[:len(y)]
+
+    if len(x) == 0 or len(y) == 0:
+        print("Not enough data to fit the model.")
+        return None
+
+    model = XGBRegressor(n_estimators=100, objective='reg:squarederror')
+    model.fit(x, y)
+
+
+    last_close = actual_data['Close'].values[-2][0]
+    future_predictions = []
+
+
+    for _ in range(5):
+        next_pred = model.predict(np.array([[last_close]]))
+        future_predictions.append(next_pred[0])
+        last_close = next_pred[0]
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(range(len(actual_data['Close'])), actual_data['Close'], color="blue", label="Last Closing Prices")
+    
+    future_indices = range(len(actual_data['Close']), len(actual_data['Close'])+5)
+    plt.plot(future_indices, future_predictions, color="red", linestyle="--", label="Predicted Next 5 Days Closing Price")
+    
+    plt.xlabel("Index")
+    plt.ylabel("Price")
+    plt.legend()
+    plt.title(f"{stock_symbol} - Closing Price Prediction for Next 5 Days")
+
+    graph_path = os.path.join(settings.BASE_DIR, 'static', 'stock', 'stock_graph', f'{stock_symbol}.png')
+    os.makedirs(os.path.dirname(graph_path), exist_ok=True)
+    plt.savefig(graph_path)
+    plt.close()
+
+    print(f"Graph saved at: {graph_path}")
+    return graph_path

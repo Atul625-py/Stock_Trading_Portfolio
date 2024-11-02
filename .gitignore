@@ -50,6 +50,7 @@ build/
 
 static/stock/media
 static/stock/graphs
+static/stock/stock_graph
 
 db.sqlite3
 

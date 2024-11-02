@@ -94,12 +94,6 @@ body {
     }
 }
 
-.stocks-table th:nth-child(4),
-.stocks-table td:nth-child(4),
-.stocks-table th:nth-child(5), 
-.stocks-table td:nth-child(5) {
-    width: 10%;
-}
 
 
 /* Reload Button Styling */
@@ -129,3 +123,7 @@ body {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+a, a:visited, a:hover, a:active {
+    text-decoration: none; /* Removes underline */
+    color: inherit; /* Inherits color from parent, making it default */
+}

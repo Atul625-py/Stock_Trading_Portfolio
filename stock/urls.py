@@ -20,5 +20,7 @@ urlpatterns = [
     path('update-graph/<int:portfolio_id>/', views.update_graph, name='update_graph'),
     path("payment/", views.payment_view, name="payment_view"),
     path("success/", views.success_page, name="success_page"),
+    path('stock/<int:stock_id>/', views.stock_analysis, name='stock_analysis'),
+
 
 ]

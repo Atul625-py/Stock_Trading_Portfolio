@@ -7,3 +7,4 @@ psycopg2-binary>=2.9,<3.0  # PostgreSQL adapter (or use another database adapter
 django-cors-headers>=3.10,<4.0  # If you're using CORS
 djangorestframework-simplejwt>=5.0,<6.0  # For JWT authentication
 pillow>=9.0,<10.0  # For image handling
+yfinance

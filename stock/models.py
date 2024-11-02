@@ -123,6 +123,8 @@ class Stock(models.Model):
     low_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     previous_close = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     timestamp = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='static/stock/stock_graph/', default='static/stock/stock_graph/default.jpg')
+
 
     def __str__(self):
         return f"{self.symbol} - {self.name}"

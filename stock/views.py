@@ -6,7 +6,7 @@ from django.db.models import F, ExpressionWrapper, DecimalField
 from .models import Stock, Portfolio, Transaction, User, Watchlist, Payment
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .utils import fetch_and_load_stock_data, make_graph  # Import your function
+from .utils import fetch_and_load_stock_data, make_graph, fetch_stock_data, generate_stock_graph  
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -61,7 +61,7 @@ def watchlist(request):
 
 
 def stocks(request):
-    stocks = Stock.objects.all()  # Fetch all stocks from the database
+    stocks = Stock.objects.all() 
     return render(request, 'stock/stocks.html', {'stocks': stocks})
 
 @login_required(login_url='/login/')
@@ -130,7 +130,7 @@ def reload_stocks(request):
 def home(request):
     user = request.user
 
-    portfolio = Portfolio.objects.filter(user=user).first()  # Ensure to get the portfolio for the current user
+    portfolio = Portfolio.objects.filter(user=user).first()  
 
     if portfolio:
         transactions = Transaction.objects.filter(
@@ -170,7 +170,7 @@ def login(request):
         user_password = User.objects.get(username=username).password
         if user_password == password:
             auth_login(request, user)
-            return redirect(home)  # Redirect to the home page after successful login
+            return redirect(home) 
         else:
             messages.error(request, "Invalid password.")
         
@@ -189,7 +189,6 @@ def register(request):
         phone = request.POST.get('phone')
         email = request.POST.get('email')
 
-        # Check if passwords match
         if password != password_confirm:
             messages.error(request, "Passwords do not match.")
             return render(request, 'stock/register.html')
@@ -207,7 +206,7 @@ def register(request):
         new_user = User(
             email=email,
             username=username,
-            password=password,  # The manager handles password hashing
+            password=password,  
             first_name=first_name,
             last_name=last_name,
             phone=phone,
@@ -220,7 +219,7 @@ def register(request):
         new_portfolio.save()
 
         messages.success(request, "Registration successful! You can now log in.")
-        return redirect('login')  # Redirect to login page after successful registration
+        return redirect('login')  
 
     return render(request, 'stock/register.html')
 
@@ -263,7 +262,7 @@ def purchase_stock(request):
 
     return JsonResponse({'status': 'Invalid request'}, status=400)
 
-# Add to Watchlist View
+
 @login_required(login_url='/login/')
 @csrf_exempt
 def add_to_watchlist(request):
@@ -271,11 +270,10 @@ def add_to_watchlist(request):
         stock_id = request.POST.get('stock_id')
         stock = get_object_or_404(Stock, id=stock_id)
 
-        # Check if the stock is already in the user's watchlist
+
         if Watchlist.objects.filter(user=request.user, stock=stock).exists():
             return JsonResponse({'status': 'Stock is already in your watchlist.'}, status=400)
 
-        # Add stock to watchlist
         watchlist_item = Watchlist.objects.create(user=request.user, stock=stock)
         return JsonResponse({'status': 'Stock added to watchlist!'})
 
@@ -286,11 +284,11 @@ def add_to_watchlist(request):
 def remove_from_watchlist(request):
     if request.method == 'POST':
         stock_id = request.POST.get('stock_id')
-        stock = get_object_or_404(Stock, id=stock_id)  # Ensure the stock exists
+        stock = get_object_or_404(Stock, id=stock_id) 
 
         try:
             watchlist_item = Watchlist.objects.get(user=request.user, stock=stock)
-            watchlist_item.delete()  # Remove the stock from the watchlist
+            watchlist_item.delete() 
             return JsonResponse({'status': f'{stock.name} removed from your watchlist.'})
         except Watchlist.DoesNotExist:
             return JsonResponse({'status': f'{stock.name} is not in your watchlist.'})
@@ -305,7 +303,7 @@ def sell_stock(request, transaction_id):
 
     if transaction.transaction_type != 'buy' or transaction.quantity == 0:
         messages.error(request, 'No stocks to sell in this transaction.')
-        return redirect('home')  # Assuming 'home' is the main page
+        return redirect('home') 
 
     stock = transaction.stock
 
@@ -338,11 +336,10 @@ def sell_stock(request, transaction_id):
 
 @login_required(login_url='/login/')
 def update_graph(request, portfolio_id):
-    # Logic to update the graph for the given portfolio
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
-    make_graph(portfolio)  # Call your function to regenerate the graph
+    make_graph(portfolio) 
 
-    graph_url = portfolio.graphs.url  # Get the updated graph URL
+    graph_url = portfolio.graphs.url 
     return JsonResponse({'graph_url': graph_url})
 
 @login_required(login_url='/login/')
@@ -353,7 +350,7 @@ def success_page(request):
     if latest_payment and latest_payment.success:
         transaction_id = latest_payment.stripe_charge_id
         amount = latest_payment.amount
-        date = latest_payment.timestamp.strftime('%Y-%m-%d %H:%M:%S')  # Format date if needed
+        date = latest_payment.timestamp.strftime('%Y-%m-%d %H:%M:%S') 
     else:
         transaction_id = "N/A"
         amount = 0.00
@@ -369,19 +366,19 @@ def success_page(request):
 def payment_view(request):
     if request.method == "POST":
         token = request.POST.get("stripeToken")
-        amount = int(float(request.POST.get("amount")) * 100)  # Convert amount to cents
+        amount = int(float(request.POST.get("amount")) * 100) 
 
         try:
             charge = stripe.Charge.create(
                 amount=amount,
-                currency="inr",  # Change to "inr" for Indian Rupees
+                currency="inr", 
                 source=token,
                 description="Payment Description",
             )
 
             payment = Payment.objects.create(
                 user=request.user,
-                amount=amount / 100,  # Convert back to dollars for storage
+                amount=amount / 100,  
                 stripe_charge_id=charge.id,
                 success=True
             )
@@ -398,3 +395,16 @@ def payment_view(request):
             return redirect("payment_view")
 
     return render(request, "stock/payment_form.html", {"stripe_publishable_key": settings.STRIPE_PUBLISHABLE_KEY})
+
+def stock_analysis(request, stock_id):
+    stock = get_object_or_404(Stock, id=stock_id)
+    
+    # Fetch last 20 days data
+    actual_data = fetch_stock_data(stock.id)
+    if actual_data is None:
+        return JsonResponse({"status": "Error fetching stock data."})
+    
+    context = {
+        'stock': stock,
+    }
+    return render(request, 'stock/stock_analysis.html', context)
