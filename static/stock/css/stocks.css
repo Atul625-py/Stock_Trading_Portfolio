@@ -126,3 +126,39 @@ a, a:visited, a:hover, a:active {
     text-decoration: none; /* Removes underline */
     color: inherit; /* Inherits color from parent, making it default */
 }
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination a {
+    margin: 0 5px;
+    text-decoration: none;
+    color: #007BFF;
+    background-color: #f8f8f8;  /* Light background to match table */
+    border: 1px solid #ddd;  /* Border similar to table */
+    padding: 8px 12px;  /* Padding for a button-like feel */
+    border-radius: 4px;  /* Rounded corners */
+    transition: background-color 0.3s ease, color 0.3s ease;  /* Smooth transition for hover effects */
+}
+
+.pagination a:hover {
+    background-color: #007BFF;  /* Blue background on hover */
+    color: white;  /* Change text color on hover */
+}
+
+.pagination span.current {
+    margin: 0 5px;
+    font-weight: bold;
+    background-color: #007BFF;  /* Highlighted current page */
+    color: white;  /* White text for the current page */
+    padding: 8px 12px;  /* Padding for consistency */
+    border-radius: 4px;  /* Rounded corners */
+    border: 1px solid #007BFF;  /* Border matching the background */
+}
+
+.pagination span.disabled {
+    color: #ccc;  /* Gray color for disabled links */
+    pointer-events: none;  /* Disable interaction */
+}

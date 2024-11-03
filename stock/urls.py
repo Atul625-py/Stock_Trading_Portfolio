@@ -3,7 +3,7 @@ from . import views
 from .decorators import user_required, admin_required
 
 urlpatterns = [
-    path('', user_required(views.home), name='home'),
+    path('', views.home, name='home'),
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
     path('profile/', user_required(views.profile), name='profile'),

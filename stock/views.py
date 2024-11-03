@@ -18,6 +18,8 @@ from decimal import Decimal
 import stripe
 from django.utils import timezone
 from datetime import timedelta
+from django.core.paginator import Paginator
+
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -70,8 +72,13 @@ def watchlist(request):
 
 
 def stocks(request):
-    stocks = Stock.objects.all() 
-    return render(request, 'stock/stocks.html', {'stocks': stocks})
+    stocks = Stock.objects.all()
+    paginator = Paginator(stocks, 20)  
+    page_number = request.GET.get('page')  
+    stocks = paginator.get_page(page_number) 
+    start_number = (stocks.number - 1) * paginator.per_page + 1
+    return render(request, 'stock/stocks.html', {'stocks': stocks, 'paginator': paginator, 'start_number': start_number})
+
 
 @login_required(login_url='/login/')
 def portfolio(request):

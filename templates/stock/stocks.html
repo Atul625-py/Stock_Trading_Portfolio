@@ -65,7 +65,7 @@
         <tbody>
             {% for stock in stocks %}
             <tr>
-                <td>{{ forloop.counter }}</td>
+                <td>{{ start_number|add:forloop.counter0 }}</td>
                 <td>
                 <a href="{% url 'stock_analysis' stock.id %}" class="stock-name">{{ stock.name }} ({{stock.symbol}})</a>
                 </td>
@@ -168,6 +168,23 @@
     </script>
 
     </section>
+    <div class="pagination">
+        <span class="step-links">
+            {% if stocks.has_previous %}
+                <a href="?page=1">&laquo; First</a>
+                <a href="?page={{ stocks.previous_page_number }}">< Previous</a>
+            {% endif %}
+
+            <span class="Current">
+                Page {{ stocks.number }} of {{ stocks.paginator.num_pages }}
+            </span>
+
+            {% if stocks.has_next %}
+                <a href="?page={{ stocks.next_page_number }}">Next ></a>
+                <a href="?page={{ stocks.paginator.num_pages }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </body>
 </html>
 
