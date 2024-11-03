@@ -16,6 +16,8 @@ from django.contrib.auth import logout
 from django.contrib.auth import login as auth_login
 from decimal import Decimal
 import stripe
+from django.utils import timezone
+from datetime import timedelta
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -325,6 +327,7 @@ def sell_stock(request, transaction_id):
 
     )
     transaction.transaction_type = 'bs'
+    transaction.transaction_date = timezone.now - timedelta(seconds=1)
     transaction.save()
 
 

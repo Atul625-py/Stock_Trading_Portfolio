@@ -20,7 +20,7 @@
 
         <div class="portfolio-section">
             <div class="chart-container">
-                <img id="portfolio-graph" src="{% static portfolio.graphs %}"  alt="Stock Chart" class="chart-image">
+                <img id="portfolio-graph" src="{% static 'stock/graphs/' %}{{portfolio.portfolio_id}}_pnl_graph.png"  alt="Stock Chart" class="chart-image">
                 <button class="reload-button" id="reload-graph">Reload Graph</button>  <!-- Reload Button -->
             </div>
 

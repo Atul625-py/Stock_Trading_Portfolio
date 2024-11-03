@@ -45,6 +45,7 @@ We welcome contributions to improve the project. Feel free to fork the repositor
 - Expand the functionality to include **algorithmic trading** capabilities.
 - Integrate more advanced machine learning algorithms for better recommendations.
 
-## License
+## Verification
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project was supervised by Mrs. Amrita Chaturvedi, Associate Professor at IIT-BHU. For more information, please visit her [profile on the IIT-BHU website](https://iitbhu.ac.in/dept/cse/people/amritacse).
+

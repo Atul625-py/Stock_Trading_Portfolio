@@ -1,10 +1,9 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from datetime import timedelta
 
 
-# Custom user manager
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
         if not email:
@@ -28,7 +27,7 @@ class UserManager(BaseUserManager):
 
 
 # User model
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     ROLES = [
         ('admin', 'Admin'),
         ('user', 'User'),
@@ -46,7 +45,7 @@ class User(AbstractBaseUser):
     image = models.ImageField(upload_to='static/stock/profile_pictures/', default='static/stock/profile_pictures/profile.jpg')
 
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)  # Change to BooleanField
     is_superuser = models.BooleanField(default=False)
 
     objects = UserManager()
@@ -64,12 +63,7 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         """Does the user have permissions to view the app `app_label`?"""
         return True
-
-    @property
-    def is_staff(self):
-        """Is the user a member of staff?"""
-        return self.is_superuser  # Adjust this logic as necessary
-    
+  
 
 
 # Portfolio model
