@@ -198,10 +198,10 @@ def generate_stock_graph(stock_symbol, actual_data):
         last_close = next_pred[0]
 
     plt.figure(figsize=(12, 6))
-    plt.plot(range(len(actual_data['Close'])), actual_data['Close'], color="blue", label="Last Closing Prices")
+    plt.plot(range(len(actual_data['Close'])), actual_data['Close'], color="blue", label="Last Closing Prices", marker='o')
     
     future_indices = range(len(actual_data['Close']), len(actual_data['Close'])+5)
-    plt.plot(future_indices, future_predictions, color="red", linestyle="--", label="Predicted Next 5 Days Closing Price")
+    plt.plot(future_indices, future_predictions, color="red",  label="Predicted Next 5 Days Closing Price", marker='o')
     
     plt.xlabel("Index")
     plt.ylabel("Price")
