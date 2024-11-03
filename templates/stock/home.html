@@ -31,7 +31,9 @@
                 {% for transaction in transactions %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ transaction.stock.name }}</td>
+                        <td>
+                            <a href="{% url 'stock_analysis' transaction.stock.id %}" class="stock-name">{{ transaction.stock.name }} ({{transaction.stock.symbol}})</a>
+                        </td>                        
                         <td>{{ transaction.quantity }}</td>
                         <td>Rs. {{ transaction.price_per_share }}</td>
                         <td>Rs. {{ transaction.current_price }}</td>

@@ -47,6 +47,7 @@ stock_symbols = [
 def fetch_and_load_stock_data():
     for symbol in stock_symbols:
         try:
+            # Fetch the current quote
             response = requests.get(BASE_URL, params={
                 'symbol': symbol,
                 'token': API_KEY
@@ -62,11 +63,20 @@ def fetch_and_load_stock_data():
             high_price = data.get('h', 0)
             low_price = data.get('l', 0)
             previous_close = data.get('pc', 0)
-                # Check if stock exists to maintain the quantity if present
+
+            # Fetch the company profile to get the stock name
+            profile_response = requests.get('https://finnhub.io/api/v1/stock/profile2', params={
+                'symbol': symbol,
+                'token': API_KEY
+            })
+            profile_data = profile_response.json()
+            stock_name = profile_data.get('name', 'N/A')  # Default to 'N/A' if not found
+
+            # Check if stock exists to maintain the quantity if present
             stock, created = Stock.objects.get_or_create(
                 symbol=symbol,
                 defaults={
-                    'name': symbol,
+                    'name': stock_name,
                     'market': 'N/A',
                     'quantity': 100,
                     'current_price': current_price,
@@ -85,8 +95,11 @@ def fetch_and_load_stock_data():
                 stock.previous_close = previous_close
                 stock.save()
 
-            Dividend.objects.update_or_create(stock=stock)
+            Dividend.objects.update_or_create(
+               stock = stock,
+           )
 
+                
             if created:
                 print(f"Created new stock entry: {symbol}")
             else:

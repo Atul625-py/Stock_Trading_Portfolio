@@ -92,3 +92,7 @@ body {
         font-size: 1.5rem;
     }
 }
+a, a:visited, a:hover, a:active {
+    text-decoration: none; /* Removes underline */
+    color: inherit; /* Inherits color from parent, making it default */
+}

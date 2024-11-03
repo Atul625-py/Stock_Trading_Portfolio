@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{% static 'stock/css/watchlist.css' %}" type="text/css" media="screen" >
     <link rel="stylesheet" href="{% static 'stock/css/navbar.css' %}" type="text/css" media="screen" >
 </head>
-<body style="background-image: url('{% static 'stock/images/bg.jpg' %}');">
+<body style="background-image: url('{% static 'stock/images/bg.jpg' %}'); background-repeat: repeat; background-size: auto;">
 
     <!-- Main Content -->
     <section class="container">
@@ -33,7 +33,9 @@
                 {% for item in watchlist_items %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ item.stock.name }} ({{ item.stock.symbol }})</td>
+                    <td>
+                        <a href="{% url 'stock_analysis' item.stock.id %}" class="stock-name">{{ item.stock.name }} ({{item.stock.symbol}})</a>
+                    </td>
                     <td>{{ item.stock.quantity }}</td>
                     <td><input type="number" class="quantity-input" value="0" min="0" max="{{ item.stock.quantity }}"></td>
                     <td>Rs. {{ item.stock.current_price|floatformat:2 }}</td>

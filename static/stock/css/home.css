@@ -65,3 +65,7 @@ body {
 .buy-btn:hover, .sell-btn:hover {
     opacity: 0.8;
 }
+a, a:visited, a:hover, a:active {
+    text-decoration: none; /* Removes underline */
+    color: black; /* Inherits color from parent, making it default */
+}
