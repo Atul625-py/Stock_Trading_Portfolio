@@ -327,7 +327,7 @@ def sell_stock(request, transaction_id):
 
     )
     transaction.transaction_type = 'bs'
-    transaction.transaction_date = timezone.now - timedelta(seconds=1)
+    transaction.transaction_date = timezone.now() - timedelta(seconds=1)
     transaction.save()
 
 

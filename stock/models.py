@@ -80,8 +80,8 @@ class Portfolio(models.Model):
         return f"{self.portfolio_name} - {self.user.username}"
     
     def get_pnl_data(self):
-        start_date = timezone.now() - timedelta(days=30)
-        transactions = self.transaction_set.filter(transaction_date__gte=start_date)
+        start_date = self.created_at
+        transactions = self.transaction_set.filter(transaction_date__gte=start_date).order_by('transaction_date')
         pnl = 0
         inv_pnl = 0
         pnl_data = []
