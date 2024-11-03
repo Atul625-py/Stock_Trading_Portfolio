@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django_browser_reload",
     'stock',
+    'guardian',
 ]
 
 
@@ -139,6 +140,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # default backend
+    'guardian.backends.ObjectPermissionBackend',
+)
+
 
 
 LOGIN_URL = '/login/'  # The URL of your login page
@@ -147,3 +153,5 @@ AUTH_USER_MODEL = 'stock.User'
 
 STRIPE_SECRET_KEY = ' '
 STRIPE_PUBLISHABLE_KEY = ' '
+ANONYMOUS_USER_NAME = 'anonymous_user'
+

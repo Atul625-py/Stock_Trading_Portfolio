@@ -53,20 +53,23 @@
                         <button type="submit" class="change-btn">Change</button>
                     </div>
                     <div class="field">
-                        <span>Wallet:</span>
-                        <input type="number" name="wallet" value="{{ user.budget }}" step="10">
-                        <button type="submit" class="change-btn">Change</button>
-                    </div>
-                    <div class="field">
                         <span>Password:</span>
                         <input type="password" name="password" placeholder="New Password">
                         <button type="submit" class="change-btn">Change</button>
                     </div>
-                    <div class="field-user-since">
-                        <span>User since:</span>
-                        <span class="value">{{ user.created_at|date:"F j, Y" }}</span>
+                </form>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="field">
+                        <span>Wallet:</span>
+                        <input type="number" name="wallet" value="{{ user.budget }}" step="10">
+                        <button type="submit" class="change-btn">Change</button>
                     </div>
                 </form>
+                <div class="field-user-since">
+                    <span>User since:</span>
+                    <span class="value">{{ user.created_at|date:"F j, Y" }}</span>
+                </div>
             </div>
             <button class="save-changes-btn">Save Changes</button>
         </div>

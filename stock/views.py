@@ -29,10 +29,17 @@ def profile(request):
     user = get_object_or_404(User, email=request.user.email)
     portfolio = get_object_or_404(Portfolio, user=user)
 
+    current_wallet_value = user.budget 
+
     if request.method == 'POST':
         if 'wallet' in request.POST:
-            messages.success(request, "Redirecting to payment page.")
-            return redirect('../payment/')
+            new_wallet_value = request.POST.get('wallet', None)
+            if new_wallet_value != current_wallet_value:
+                messages.success(request, "Redirecting to payment page.")
+                return redirect('../payment/')
+            else:
+                messages.info(request, "No changes made to the wallet.")
+
 
         if 'image' in request.FILES:
             user.image = request.FILES['image']
