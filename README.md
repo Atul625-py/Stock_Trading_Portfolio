@@ -28,11 +28,21 @@ To get started with this project, follow the instructions below.
     ```bash
     cd Stock_Trading_Portfolio
     ```
+It is highly recommended to use a virtual environment for isolating dependencies. Follow the instructions below to set up and activate the virtual environment for your operating system.
+
 3. Install the required dependencies:
     ```bash
     pip install -r requirements.txt
     ```
-4. Run the Django server:
+5. Make migrations:
+   ```bash
+   python manage.py makemigrations
+   ```
+6. Migrate the database:
+   ```bash
+   python manage.py migrate
+   ```
+7. Run the Django server:
     ```bash
     python manage.py runserver
     ```
